@@ -1,0 +1,79 @@
+package io.app.services.impl;
+
+import io.app.dto.ApiResponse;
+import io.app.dto.ResponseToken;
+import io.app.excetptions.DuplicateFoundException;
+import io.app.excetptions.ResourceNotFoundException;
+import io.app.model.Teacher;
+import io.app.repository.TeacherRepository;
+import io.app.services.AuthService;
+import io.app.services.JwtService;
+import lombok.RequiredArgsConstructor;
+import org.apache.coyote.Response;
+import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.Random;
+
+@Service
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
+    private final TeacherRepository repository;
+    private final JwtService jwtService;
+
+    @Override
+    public ApiResponse login(String phoneNumber) {
+        String otp=generateOtp();
+        Teacher teacher=repository.findByPhone(phoneNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Teacher is not registered"));
+        teacher.setOtp(otp);
+        teacher.setOtpExpiry(new Date(System.currentTimeMillis()+ 5 * 60 * 1000));
+        repository.save(teacher);
+        return ApiResponse.builder()
+                .status(true)
+                .message("Otp has generated successfully")
+                .build();
+    }
+
+    @Override
+    public ApiResponse signup(Teacher teacher) {
+        boolean isTeacherExists=repository.existsByPhone(teacher.getPhone());
+        if (isTeacherExists){
+            throw new DuplicateFoundException("Teacher already exists");
+        }
+        repository.save(teacher);
+        return ApiResponse.builder()
+                .status(true)
+                .message("User Registration successfully")
+                .build();
+    }
+
+    @Override
+    public ResponseToken validateToken(String phoneNumber, String otp) {
+        Teacher teacher=repository.findByPhone(phoneNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Teacher is not registered"));
+        boolean isOtpValid=otp.equals(teacher.getOtp());
+        if (isOtpValid && teacher.getOtpExpiry().after(new Date())){
+            String token=jwtService.generateToken(teacher);
+            return ResponseToken.builder()
+                    .status(true)
+                    .token(token)
+                    .build();
+        }
+
+        return ResponseToken.builder()
+                .status(false)
+                .build();
+    }
+
+    private String generateOtp(){
+        Random random=new Random();
+        String otp="";
+        for(int i=0;i<5;i++){
+            int randomNumber=random.nextInt(10);
+            otp+=randomNumber;
+        }
+        return otp;
+    }
+
+}
