@@ -1,5 +1,7 @@
 package io.app.services.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import io.app.dto.ApiResponse;
 import io.app.dto.ResponseToken;
 import io.app.excetptions.DuplicateFoundException;
@@ -10,10 +12,14 @@ import io.app.services.AuthService;
 import io.app.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Date;
+import java.util.Map;
 import java.util.Random;
 
 @Service
@@ -21,6 +27,8 @@ import java.util.Random;
 public class AuthServiceImpl implements AuthService {
     private final TeacherRepository repository;
     private final JwtService jwtService;
+    private final Cloudinary cloudinary;
+
 
     @Override
     public ApiResponse login(String phoneNumber) {
@@ -37,11 +45,14 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse signup(Teacher teacher, MultipartFile profilePic) {
+    public ApiResponse signup(Teacher teacher, MultipartFile profilePic) throws IOException {
         boolean isTeacherExists=repository.existsByPhone(teacher.getPhone());
         if (isTeacherExists){
             throw new DuplicateFoundException("Teacher already exists");
         }
+
+        String profilePicUrl=uploadProfilePic(profilePic);
+        teacher.setProfilePic(profilePicUrl);
 
         repository.save(teacher);
         return ApiResponse.builder()
@@ -79,9 +90,10 @@ public class AuthServiceImpl implements AuthService {
     }
 
 
-    private String uploadProfilePic(MultipartFile profilePic){
-
-        return null;
+    private String uploadProfilePic(MultipartFile profilePic) throws IOException {
+        Map uploadResult=cloudinary.uploader().upload(profilePic.getBytes(), ObjectUtils.asMap());
+        String imageUrl=uploadResult.get("url").toString();
+        return imageUrl;
     }
 
 }

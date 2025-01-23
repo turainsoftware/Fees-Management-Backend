@@ -101,6 +101,14 @@
 			<scope>test</scope>
 		</dependency>
 
+		<!--Claudinary-->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.39.0</version>
+		</dependency>
+		<!--Claudinary-->
+
 
 	</dependencies>
 

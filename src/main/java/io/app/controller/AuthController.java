@@ -1,5 +1,6 @@
 package io.app.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.app.dto.ApiResponse;
 import io.app.dto.ResponseToken;
 import io.app.model.Teacher;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -23,8 +26,10 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse signUp(@RequestBody Teacher teacher,
-                              @RequestParam("profile-pic") MultipartFile profilePic){
+    public ApiResponse signUp(@RequestParam("teacher") String teacherJson,
+                              @RequestParam("profile-pic") MultipartFile profilePic) throws IOException {
+        ObjectMapper objectMapper=new ObjectMapper();
+        Teacher teacher=objectMapper.readValue(teacherJson,Teacher.class);
         return service.signup(teacher,profilePic);
     }
 
@@ -35,5 +40,10 @@ public class AuthController {
         return service.validateToken(phoneNumber,otp);
     }
 
+
+    @PostMapping("/ok")
+    public String ok(@RequestBody Teacher teacher){
+        return "hello";
+    }
 
 }
