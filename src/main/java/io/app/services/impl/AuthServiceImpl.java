@@ -11,6 +11,7 @@ import io.app.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.Response;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.Random;
@@ -36,11 +37,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public ApiResponse signup(Teacher teacher) {
+    public ApiResponse signup(Teacher teacher, MultipartFile profilePic) {
         boolean isTeacherExists=repository.existsByPhone(teacher.getPhone());
         if (isTeacherExists){
             throw new DuplicateFoundException("Teacher already exists");
         }
+
         repository.save(teacher);
         return ApiResponse.builder()
                 .status(true)
@@ -74,6 +76,12 @@ public class AuthServiceImpl implements AuthService {
             otp+=randomNumber;
         }
         return otp;
+    }
+
+
+    private String uploadProfilePic(MultipartFile profilePic){
+
+        return null;
     }
 
 }

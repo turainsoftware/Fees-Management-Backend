@@ -7,6 +7,7 @@ import io.app.services.impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -22,8 +23,9 @@ public class AuthController {
 
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
-    public ApiResponse signUp(@RequestBody Teacher teacher){
-        return service.signup(teacher);
+    public ApiResponse signUp(@RequestBody Teacher teacher,
+                              @RequestParam("profile-pic") MultipartFile profilePic){
+        return service.signup(teacher,profilePic);
     }
 
     @GetMapping("/validate-otp")
