@@ -1,12 +1,15 @@
 package io.app.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
 
 import java.sql.Time;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -25,19 +28,21 @@ public class Batch {
     private String name;
     private String batchSession;
     @Column(nullable = false)
-    private Time startTime;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime startTime;
     @Column(nullable = false)
-    private Time endTime;
-    private Set<Days> days=new HashSet<>();
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+    private LocalTime endTime;
+    private Set<Days> days = new HashSet<>();
     @Column(nullable = false)
     private Double monthlyFees;
     private Double monthlyExamFees;
 
     @ManyToOne
-    @JoinColumn(name = "boardId",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "boardId", referencedColumnName = "id", nullable = false)
     private Board board;
     @ManyToOne
-    @JoinColumn(name = "languageId",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "languageId", referencedColumnName = "id", nullable = false)
     private Language language;
     @ManyToMany
     @JoinTable(
@@ -58,9 +63,8 @@ public class Batch {
     private Set<Class> classes;
 
     @ManyToOne
-    @JoinColumn(name = "teacherId",referencedColumnName = "id",nullable = false)
+    @JoinColumn(name = "teacherId", referencedColumnName = "id", nullable = false)
     private Teacher teacher;
-
 
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -69,15 +73,14 @@ public class Batch {
     private Date updatedAt;
 
 
-
     @PrePersist
-    public void preCreate(){
-        createdAt=new Date();
+    public void preCreate() {
+        createdAt = new Date();
     }
 
     @Temporal(TemporalType.TIMESTAMP)
-    public void preUpdate(){
-        updatedAt=new Date();
+    public void preUpdate() {
+        updatedAt = new Date();
     }
 
 }

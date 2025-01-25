@@ -1,6 +1,7 @@
 package io.app.controller;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.TeacherDto;
 import io.app.model.*;
 import io.app.model.Class;
 import io.app.services.impl.TeacherServiceImpl;
@@ -20,7 +21,7 @@ public class TeacherController {
     private final TeacherServiceImpl service;
 
     @GetMapping("/profile")
-    public ResponseEntity<Teacher> profile(@RequestHeader("Authorization") String authHeader){
+    public ResponseEntity<TeacherDto> profile(@RequestHeader("Authorization") String authHeader){
         return ResponseEntity.ok(service.profile(authHeader));
     }
 

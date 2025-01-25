@@ -22,15 +22,15 @@ public class Teacher implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @Column(unique = true,nullable = true)
+    @Column(unique = true, nullable = true)
     private String phone;
-    @Column(unique = true,nullable = true)
+    @Column(unique = true, nullable = true)
     private String email;
-    private String otp="123456";
+    private String otp = "123456";
     private Date otpExpiry;
     private Gender gender;
     private String profilePic;
-    private Role role=Role.TEACHER;
+    private Role role = Role.TEACHER;
     @Temporal(TemporalType.DATE)
     private Date createdAt;
     @Temporal(TemporalType.TIMESTAMP)
@@ -46,37 +46,37 @@ public class Teacher implements UserDetails {
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
-    inverseJoinColumns = @JoinColumn(name = "classId"))
+            inverseJoinColumns = @JoinColumn(name = "classId"))
     private Set<Class> classes;
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
-    inverseJoinColumns = @JoinColumn(name = "boardId"))
+            inverseJoinColumns = @JoinColumn(name = "boardId"))
     private Set<Board> boards;
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
-    inverseJoinColumns = @JoinColumn(name = "languageId"))
+            inverseJoinColumns = @JoinColumn(name = "languageId"))
     private Set<Language> languages;
 
     @OneToMany(mappedBy = "teacher")
-    private Set<Batch> batches=new HashSet<>();
+    private Set<Batch> batches = new HashSet<>();
 
 
     @PrePersist
-    public void preCreate(){
-        createdAt=new Date();
-        updateAt=new Date();
+    public void preCreate() {
+        createdAt = new Date();
+        updateAt = new Date();
     }
 
     @PreUpdate
-    public void preUpdate(){
-        updateAt=new Date();
+    public void preUpdate() {
+        updateAt = new Date();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Set<SimpleGrantedAuthority> roles=new HashSet<>();
+        Set<SimpleGrantedAuthority> roles = new HashSet<>();
         roles.add(new SimpleGrantedAuthority(role.name()));
         return roles;
     }

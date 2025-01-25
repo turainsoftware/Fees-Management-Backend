@@ -1,6 +1,7 @@
 package io.app.services.impl;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.TeacherDto;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.*;
 import io.app.model.Class;
@@ -9,6 +10,7 @@ import io.app.services.JwtService;
 import io.app.services.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -20,12 +22,14 @@ import java.util.Set;
 public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository repository;
     private final JwtService jwtService;
+    private final ModelMapper modelMapper;
 
     @Override
-    public Teacher profile(String authToken) {
+    public TeacherDto profile(String authToken) {
         Teacher teacher=repository.findByPhone(getMobileByToken(authToken))
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
-        return teacher;
+        TeacherDto teacherDto=modelMapper.map(teacher,TeacherDto.class);
+        return teacherDto;
     }
 
     @Override

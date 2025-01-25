@@ -1,5 +1,6 @@
 package io.app.config;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.repository.TeacherRepository;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,11 @@ public class ApplicationConfig {
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
+    }
+
+    @Bean
+    public JavaTimeModule javaTimeModule(){
+        return new JavaTimeModule();
     }
 
 }
