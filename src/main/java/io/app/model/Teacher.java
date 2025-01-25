@@ -54,11 +54,13 @@ public class Teacher implements UserDetails {
     inverseJoinColumns = @JoinColumn(name = "boardId"))
     private Set<Board> boards;
 
-
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
     inverseJoinColumns = @JoinColumn(name = "languageId"))
     private Set<Language> languages;
+
+    @OneToMany(mappedBy = "teacher")
+    private Set<Batch> batches=new HashSet<>();
 
 
     @PrePersist

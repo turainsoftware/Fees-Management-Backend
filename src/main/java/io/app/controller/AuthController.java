@@ -27,7 +27,7 @@ public class AuthController {
     @PostMapping("/signup")
     @ResponseStatus(HttpStatus.CREATED)
     public ApiResponse signUp(@RequestParam("teacher") String teacherJson,
-                              @RequestParam("profile-pic") MultipartFile profilePic) throws IOException {
+                              @RequestParam(value = "profile-pic") MultipartFile profilePic) throws IOException {
         ObjectMapper objectMapper=new ObjectMapper();
         Teacher teacher=objectMapper.readValue(teacherJson,Teacher.class);
         return service.signup(teacher,profilePic);
