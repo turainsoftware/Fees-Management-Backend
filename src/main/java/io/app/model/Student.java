@@ -48,6 +48,14 @@ public class Student {
     )
     private Set<Batch> batches;
 
+    @ManyToMany
+    @JoinTable(
+           name = "studentTeachers",
+            joinColumns = @JoinColumn(name = "studentId"),
+            inverseJoinColumns = @JoinColumn(name = "teacherId")
+    )
+    private Set<Teacher> teachers;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Months joiningMonth;
@@ -67,7 +75,7 @@ public class Student {
     private String district;
 
     @Column(nullable = false)
-    private String pincode;
+    private String pinCode;
 
     // Upload Details
     private String profilePic; // Store the file path or URL

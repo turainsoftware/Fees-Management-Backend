@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
@@ -91,7 +92,11 @@ public class AuthServiceImpl implements AuthService {
 
 
     private String uploadProfilePic(MultipartFile profilePic) throws IOException {
-        Map uploadResult=cloudinary.uploader().upload(profilePic.getBytes(), ObjectUtils.asMap());
+        String transformation = "c_fill,w_500,h_500,g_faces";
+
+
+        Map uploadResult=cloudinary.uploader()
+                .upload(profilePic.getBytes(), ObjectUtils.asMap("transformation",transformation));
         String imageUrl=uploadResult.get("url").toString();
         return imageUrl;
     }
