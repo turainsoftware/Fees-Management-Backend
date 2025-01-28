@@ -28,7 +28,7 @@ import java.util.Random;
 public class AuthServiceImpl implements AuthService {
     private final TeacherRepository repository;
     private final JwtService jwtService;
-    private final Cloudinary cloudinary;
+    private final FileServiceImpl fileService;
 
 
     @Override
@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
             throw new DuplicateFoundException("Teacher already exists");
         }
 
-        String profilePicUrl=uploadProfilePic(profilePic);
+        String profilePicUrl=fileService.uploadProfilePic(profilePic);
         teacher.setProfilePic(profilePicUrl);
 
         repository.save(teacher);
@@ -88,17 +88,6 @@ public class AuthServiceImpl implements AuthService {
             otp+=randomNumber;
         }
         return "12345";
-    }
-
-
-    private String uploadProfilePic(MultipartFile profilePic) throws IOException {
-        String transformation = "c_fill,w_500,h_500,g_faces";
-
-
-        Map uploadResult=cloudinary.uploader()
-                .upload(profilePic.getBytes(), ObjectUtils.asMap("transformation",transformation));
-        String imageUrl=uploadResult.get("url").toString();
-        return imageUrl;
     }
 
 }

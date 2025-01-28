@@ -33,7 +33,6 @@ public class Student {
     @Column(nullable = false)
     private String guardianPhone;
 
-    @Column(unique = true)
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -74,7 +73,7 @@ public class Student {
     @Column(nullable = false)
     private String district;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "varchar(255) default '700001'")
     private String pinCode;
 
     // Upload Details

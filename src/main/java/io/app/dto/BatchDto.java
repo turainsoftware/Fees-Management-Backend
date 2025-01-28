@@ -20,6 +20,7 @@ import java.util.Set;
 @Builder
 @Data
 public class BatchDto {
+    private Long id;
     private String name;
     private String batchSession;
     private LocalTime startTime;

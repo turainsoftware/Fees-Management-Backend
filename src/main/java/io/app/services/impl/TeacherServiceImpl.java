@@ -1,10 +1,12 @@
 package io.app.services.impl;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.BatchDto;
 import io.app.dto.TeacherDto;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.*;
 import io.app.model.Class;
+import io.app.repository.BatchRepository;
 import io.app.repository.TeacherRepository;
 import io.app.services.JwtService;
 import io.app.services.TeacherService;
@@ -15,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +27,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final TeacherRepository repository;
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
+    private final BatchRepository batchRepository;
 
     @Override
     public TeacherDto profile(String authToken) {
@@ -78,6 +83,18 @@ public class TeacherServiceImpl implements TeacherService {
                 .status(true)
                 .message("Languages updated successfully")
                 .build();
+    }
+
+    @Override
+    public Set<BatchDto> allBatch(String authToken) {
+        String phone=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(phone)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        List<Batch> batches=batchRepository.findByTeacher(teacher);
+        Set<BatchDto> result=batches.stream().map((item)->{
+            return modelMapper.map(item,BatchDto.class);
+        }).collect(Collectors.toSet());
+        return result;
     }
 
 

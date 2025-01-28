@@ -26,4 +26,17 @@ public class GlobalExceptionHandler {
                 .message(ex.getMessage())
                 .build();
     }
+
+
+    @ExceptionHandler(NotAllowedException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiResponse handleNotAllowedException(NotAllowedException ex){
+        return ApiResponse.builder()
+                .message(ex.getMessage())
+                .status(false)
+                .build();
+    }
+
+
+
 }

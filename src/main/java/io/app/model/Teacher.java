@@ -42,17 +42,17 @@ public class Teacher implements UserDetails {
             joinColumns = @JoinColumn(name = "teacherId"),
             inverseJoinColumns = @JoinColumn(name = "subjectId")
     )
-    private Set<Subject> subjects;
+    private Set<Subject> subjects=new HashSet<>();
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
             inverseJoinColumns = @JoinColumn(name = "classId"))
-    private Set<Class> classes;
+    private Set<Class> classes=new HashSet<>();
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
             inverseJoinColumns = @JoinColumn(name = "boardId"))
-    private Set<Board> boards;
+    private Set<Board> boards=new HashSet<>();
 
     @ManyToMany
     @JoinTable(joinColumns = @JoinColumn(name = "teacherId"),
@@ -109,5 +109,20 @@ public class Teacher implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, phone); // Use immutable fields only
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Teacher teacher = (Teacher) o;
+        return Objects.equals(id, teacher.id) &&
+                Objects.equals(name, teacher.name) &&
+                Objects.equals(phone, teacher.phone); // Use immutable fields only
     }
 }

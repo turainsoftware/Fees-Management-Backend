@@ -1,19 +1,24 @@
 package io.app.controller;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.BatchDto;
 import io.app.dto.TeacherDto;
 import io.app.model.*;
 import io.app.model.Class;
 import io.app.services.impl.TeacherServiceImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/teacher")
 @RequiredArgsConstructor
@@ -47,6 +52,14 @@ public class TeacherController {
     public ResponseEntity<ApiResponse> updateLanguages(@RequestBody Set<Language> languages,
                                                      @RequestHeader("Authorization") String authToken){
         return ResponseEntity.ok(service.updateLanguage(languages,authToken));
+    }
+
+
+
+    @GetMapping("/batches")
+    @ResponseStatus(HttpStatus.OK)
+    public Set<BatchDto> allBatches(@RequestHeader("Authorization") String authToken){
+        return service.allBatch(authToken);
     }
 
 
