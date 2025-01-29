@@ -1,10 +1,7 @@
 package io.app.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,6 +14,7 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 @Data
+@ToString
 public class Teacher implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -60,6 +58,7 @@ public class Teacher implements UserDetails {
     private Set<Language> languages;
 
     @OneToMany(mappedBy = "teacher")
+    @ToString.Exclude
     private Set<Batch> batches = new HashSet<>();
 
 

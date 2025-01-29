@@ -2,10 +2,7 @@ package io.app.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.Fetch;
 
 import java.sql.Time;
@@ -20,6 +17,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 @Data
+@ToString
 public class Batch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +62,7 @@ public class Batch {
 
     @ManyToOne
     @JoinColumn(name = "teacherId", referencedColumnName = "id", nullable = false)
+    @ToString.Exclude
     private Teacher teacher;
 
 

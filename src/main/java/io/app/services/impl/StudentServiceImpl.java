@@ -1,6 +1,7 @@
 package io.app.services.impl;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.BatchDto;
 import io.app.dto.StudentDto;
 import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.NotAllowedException;
@@ -14,6 +15,7 @@ import io.app.repository.TeacherRepository;
 import io.app.services.JwtService;
 import io.app.services.StudentService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class StudentServiceImpl implements StudentService {
     private final StudentRepository repository;
     private final TeacherRepository teacherRepository;
@@ -43,7 +46,7 @@ public class StudentServiceImpl implements StudentService {
                                            StudentDto studentDto,
                                            Long batchId,
                                            MultipartFile profilePic) throws IOException {
-
+        log.info("Enterned in service Package");
         if (profilePic.getSize()>MAX_PICSIZE){
             throw new NotAllowedException("Image size should be less than 200KB");
         }
@@ -89,14 +92,39 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<StudentDto> allStudentByTeacher(String authToken) {
+    public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent) {
         String phone=extractTeacher(authToken);
         Teacher teacher=teacherRepository.findByPhone(phone)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
-        List<Student> students=repository.findByTeachers(teacher);
+        List<Student> students;
+        if (isRecent){
+            students=repository.findByTeachersOrderByCreatedAtDesc(teacher);
+        }else{
+            students=repository.findByTeachersOrderByCreatedAtAsc(teacher);
+        }
         List<StudentDto> result=students.stream().map((item)->{
             return modelMapper.map(item,StudentDto.class);
         }).collect(Collectors.toList());
+        return result;
+    }
+
+    @Override
+    public List<StudentDto> allStudentByBatch(Long batchId) {
+        boolean isBatchExists=batchRepository.existsById(batchId);
+        Batch batch;
+        if(isBatchExists){
+            batch=Batch.builder()
+                    .id(batchId)
+                    .build();
+        }else{
+             throw new ResourceNotFoundException("Invalid Batch Selected");
+        }
+
+        List<Student> students=repository.findByBatches(Set.of(batch));
+        List<StudentDto> result=students.stream().map((item)->{
+            return modelMapper.map(item, StudentDto.class);
+        }).collect(Collectors.toList());
+
         return result;
     }
 

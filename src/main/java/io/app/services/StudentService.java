@@ -14,5 +14,6 @@ public interface StudentService {
                                            StudentDto studentDto,
                                            Long batchId,
                                            MultipartFile profilePic) throws IOException;
-    public List<StudentDto> allStudentByTeacher(String authToken);
+    public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent);
+    public List<StudentDto> allStudentByBatch(Long batchId);
 }
