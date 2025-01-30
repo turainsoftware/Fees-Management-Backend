@@ -16,6 +16,7 @@ import io.app.services.JwtService;
 import io.app.services.StudentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -46,7 +47,6 @@ public class StudentServiceImpl implements StudentService {
                                            StudentDto studentDto,
                                            Long batchId,
                                            MultipartFile profilePic) throws IOException {
-        log.info("Enterned in service Package");
         if (profilePic.getSize()>MAX_PICSIZE){
             throw new NotAllowedException("Image size should be less than 200KB");
         }
@@ -92,6 +92,36 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public ApiResponse assignBatch(String authToken,
+                                   long studentId,
+                                   long batchId) {
+        String mobileNumber=extractTeacher(authToken);
+        Long teacherId=teacherRepository.findIdByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceClosedException("Invalid credentials"));
+        Batch batch=Batch.builder()
+                .id(batchId)
+                .build();
+        Teacher teacher=Teacher.builder()
+                .id(teacherId)
+                .build();
+        Student student=repository.findById(studentId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Student"));
+        Set<Teacher> updatedTeachers=student.getTeachers();
+        updatedTeachers.add(teacher);
+        Set<Batch> updatedBatch=student.getBatches();
+        updatedBatch.add(batch);
+        if (isStudentAlreadyEnrolledTheBatch(batch,studentId)){
+            throw new DuplicateFoundException("Student already exist in the batch");
+        }
+        repository.save(student);
+
+        return ApiResponse.builder()
+                .status(true)
+                .message("Student assign successfully completed")
+                .build();
+    }
+
+    @Override
     public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent) {
         String phone=extractTeacher(authToken);
         Teacher teacher=teacherRepository.findByPhone(phone)
@@ -128,9 +158,35 @@ public class StudentServiceImpl implements StudentService {
         return result;
     }
 
+    @Override
+    public ApiResponse isStudentExists(String mobileNumber) {
+        boolean isStudentExist=repository.existsByPhone(mobileNumber);
+        if (isStudentExist){
+            return ApiResponse.builder()
+                    .status(true)
+                    .build();
+        }
+        return ApiResponse.builder()
+                .status(true)
+                .build();
+    }
+
+    @Override
+    public StudentDto getStudentByMobile(String mobile) {
+        Student student=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Student Not found"));
+        StudentDto studentDto=modelMapper.map(student,StudentDto.class);
+        return studentDto;
+    }
+
     private String extractTeacher(String authToken){
         authToken=authToken.substring(7);
         String phone=jwtService.extractUsername(authToken);
         return phone;
+    }
+
+    private boolean isStudentAlreadyEnrolledTheBatch(Batch batch,long studentId){
+        List<Student> batches=repository.findByBatches(Set.of(batch));
+        return batches.stream().anyMatch((item)->item.getId().equals(studentId));
     }
 }

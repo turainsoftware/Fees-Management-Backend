@@ -14,6 +14,9 @@ public interface StudentService {
                                            StudentDto studentDto,
                                            Long batchId,
                                            MultipartFile profilePic) throws IOException;
+    public ApiResponse assignBatch(String authToken,long studentId,long batchId);
     public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent);
     public List<StudentDto> allStudentByBatch(Long batchId);
+    public ApiResponse isStudentExists(String mobileNumber);
+    public StudentDto getStudentByMobile(String mobile);
 }
