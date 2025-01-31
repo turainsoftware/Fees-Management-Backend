@@ -167,7 +167,7 @@ public class StudentServiceImpl implements StudentService {
                     .build();
         }
         return ApiResponse.builder()
-                .status(true)
+                .status(false)
                 .build();
     }
 
