@@ -3,13 +3,9 @@ package io.app.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.Fetch;
-
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -22,9 +18,18 @@ public class Batch {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String name;
-    private String batchSession;
+
+    @Column(nullable = false)
+    private int startYear;
+    @Column(nullable = false)
+    private int endYear;
+
+    @Column(nullable = false)
+    private int startMonth;
+    @Column(nullable = false)
+    private int endMonth;
+
     @Column(nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalTime startTime;

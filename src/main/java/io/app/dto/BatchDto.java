@@ -22,7 +22,10 @@ import java.util.Set;
 public class BatchDto {
     private Long id;
     private String name;
-    private String batchSession;
+    private int startYear;
+    private int endYear;
+    private int startMonth;
+    private int endMonth;
     private LocalTime startTime;
     private LocalTime endTime;
     private Set<Days> days=new HashSet<>();

@@ -13,4 +13,6 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
     boolean existsByName(String name);
     @Cacheable(value = "batches",key = "#batchId")
     public Optional<Batch> findById(Long id);
+
+    public boolean existsByNameAndTeacher(String name,Teacher teacher);
 }

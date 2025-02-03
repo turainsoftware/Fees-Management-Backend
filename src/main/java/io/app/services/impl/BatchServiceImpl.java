@@ -11,6 +11,7 @@ import io.app.repository.*;
 import io.app.services.BatchService;
 import io.app.services.JwtService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BatchServiceImpl implements BatchService {
@@ -34,11 +36,11 @@ public class BatchServiceImpl implements BatchService {
         String userName=extractJwt(authToken);
         Teacher teacher= teacherRepository.findByPhone(userName)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid User credentials"));
-        if (repository.existsByName(batchDto.getName())){
+        if (repository.existsByNameAndTeacher(batchDto.getName(),teacher)){
             throw new DuplicateFoundException("The batch is already exists");
         }
         if (hasTimeConflict(teacher,batchDto.getStartTime(),batchDto.getEndTime(),batchDto.getDays())){
-            throw new DuplicateFoundException("Teacher already has a batch scheduled at this time.");
+            throw new DuplicateFoundException("Teacher already has a batch scheduled between this time.");
         }
 
 
@@ -46,7 +48,7 @@ public class BatchServiceImpl implements BatchService {
             throw new ResourceNotFoundException("Board is not valid");
         }
         if(!teacher.getLanguages().stream().anyMatch((data)->data.getId().equals(batchDto.getLanguage().getId()))){
-            throw new ResourceNotFoundException("invalid Language");
+            throw new ResourceNotFoundException("Invalid Language");
         }
 
         if (batchDto.getSubjects()!=null && !teacher.getSubjects().containsAll(batchDto.getSubjects())){
@@ -82,20 +84,19 @@ public class BatchServiceImpl implements BatchService {
 
     @Override
     public boolean hasTimeConflict(Teacher teacher,
-                                   LocalTime startTime,
-                                   LocalTime endTime,
+                                   LocalTime newStartTime,
+                                   LocalTime newEndTime,
                                    Set<Days> days) {
-        // Retrieve batches for the teacher
         List<Batch> batches = repository.findByTeacher(teacher);
+        log.info("{}", teacher);
 
         for (Batch existingBatch : batches) {
             if (existingBatch.getDays().stream().anyMatch(days::contains)) {
                 LocalTime existingStartTime = existingBatch.getStartTime();
                 LocalTime existingEndTime = existingBatch.getEndTime();
 
-                if ((startTime.isAfter(existingStartTime) && startTime.isBefore(existingEndTime)) ||
-                        (endTime.isAfter(existingStartTime) && endTime.isBefore(existingEndTime)) ||
-                        (startTime.isBefore(existingStartTime) && endTime.isAfter(existingEndTime))) {
+                // Check for overlap
+                if (newStartTime.isBefore(existingEndTime) && newEndTime.isAfter(existingStartTime)) {
                     return true;
                 }
             }
@@ -103,6 +104,7 @@ public class BatchServiceImpl implements BatchService {
 
         return false;
     }
+
     @Override
     public String extractJwt(String authToken) {
         authToken=authToken.substring(7);
