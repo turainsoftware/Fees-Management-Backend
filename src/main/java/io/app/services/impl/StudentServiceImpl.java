@@ -1,7 +1,6 @@
 package io.app.services.impl;
 
 import io.app.dto.ApiResponse;
-import io.app.dto.BatchDto;
 import io.app.dto.StudentDto;
 import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.NotAllowedException;
@@ -18,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,12 +59,19 @@ public class StudentServiceImpl implements StudentService {
         Teacher teacher=teacherRepository.findByPhone(teacherPhone)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid teacher credentials"));
 
+        Batch batch=Batch.builder()
+                .id(batchId)
+                .build();
         // Batch Validation
-        Set<Batch> batches = teacher.getBatches().stream().filter((item)->{
-            return item.getId().equals(batchId);
-        }).collect(Collectors.toSet());
+//        Set<Batch> batches = teacher.getBatches().stream().filter((item)->{
+//            return item.getId().equals(batchId);
+//        }).collect(Collectors.toSet());
+//
+//        if(batches.size()<=0){
+//            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
+//        }
 
-        if(batches.size()<=0){
+        if (!teacher.getBatches().contains(batch)){
             throw new ResourceNotFoundException("Teacher doesn't have such Batch");
         }
 
@@ -82,9 +87,10 @@ public class StudentServiceImpl implements StudentService {
         //Associating Batch with Student
 //        Set<Batch> batches = new HashSet<>();
 //        batches.add(batch);
-        student.setBatches(batches);
 
-        Student savedStudent =repository.save(student);
+        student.setBatches(Set.of(batch));
+
+        Student savedStudent = repository.save(student);
         return ApiResponse.builder()
                 .status(true)
                 .message("Student Registration Successfully Completed")

@@ -76,7 +76,6 @@ public class Batch {
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-
     @PrePersist
     public void preCreate() {
         createdAt = new Date();
