@@ -7,8 +7,10 @@ import io.app.excetptions.NotAllowedException;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.Batch;
 import io.app.model.Student;
+import io.app.model.StudentBatchEnrollment;
 import io.app.model.Teacher;
 import io.app.repository.BatchRepository;
+import io.app.repository.StudentBatchEnrollmentRepository;
 import io.app.repository.StudentRepository;
 import io.app.repository.TeacherRepository;
 import io.app.services.JwtService;
@@ -36,6 +38,7 @@ public class StudentServiceImpl implements StudentService {
     private final FileServiceImpl fileService;
     private final BatchRepository batchRepository;
     private final ModelMapper modelMapper;
+    private final StudentBatchEnrollmentRepository studentBatchEnrollmentRepository;
 
     private final static long MAX_PICSIZE=200*1024;
 
@@ -44,7 +47,9 @@ public class StudentServiceImpl implements StudentService {
     public ApiResponse studentRegistration(String authToken,
                                            StudentDto studentDto,
                                            Long batchId,
-                                           MultipartFile profilePic) throws IOException {
+                                           MultipartFile profilePic,
+                                           int joiningYear,
+                                           int joiningMonth) throws IOException {
         if (profilePic.getSize()>MAX_PICSIZE){
             throw new NotAllowedException("Image size should be less than 200KB");
         }
@@ -71,9 +76,9 @@ public class StudentServiceImpl implements StudentService {
 //            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
 //        }
 
-        if (!teacher.getBatches().contains(batch)){
-            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
-        }
+//        if (!teacher.getBatches().contains(batch)){
+//            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
+//        }
 
         String profileUrl=fileService.uploadProfilePic(profilePic);
         Student student=modelMapper.map(studentDto,Student.class);
@@ -84,6 +89,7 @@ public class StudentServiceImpl implements StudentService {
         teachers.add(teacher);
         student.setTeachers(teachers);
 
+
         //Associating Batch with Student
 //        Set<Batch> batches = new HashSet<>();
 //        batches.add(batch);
@@ -91,6 +97,15 @@ public class StudentServiceImpl implements StudentService {
         student.setBatches(Set.of(batch));
 
         Student savedStudent = repository.save(student);
+
+        StudentBatchEnrollment enrollment=StudentBatchEnrollment.builder()
+                .year(joiningYear)
+                .month(joiningMonth)
+                .student(savedStudent)
+                .batch(batch)
+                .build();
+        studentBatchEnrollmentRepository.save(enrollment);
+
         return ApiResponse.builder()
                 .status(true)
                 .message("Student Registration Successfully Completed")
@@ -100,7 +115,9 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public ApiResponse assignBatch(String authToken,
                                    long studentId,
-                                   long batchId) {
+                                   long batchId,
+                                   int startYear,
+                                   int startMonth) {
         String mobileNumber=extractTeacher(authToken);
         Long teacherId=teacherRepository.findIdByPhone(mobileNumber)
                 .orElseThrow(()->new ResourceClosedException("Invalid credentials"));
@@ -119,7 +136,15 @@ public class StudentServiceImpl implements StudentService {
         if (isStudentAlreadyEnrolledTheBatch(batch,studentId)){
             throw new DuplicateFoundException("Student already exist in the batch");
         }
-        repository.save(student);
+        Student savedStudent=repository.save(student);
+
+        StudentBatchEnrollment studentBatchEnrollment=StudentBatchEnrollment.builder()
+                .batch(batch)
+                .student(savedStudent)
+                .year(startYear)
+                .month(startMonth)
+                .build();
+        studentBatchEnrollmentRepository.save(studentBatchEnrollment);
 
         return ApiResponse.builder()
                 .status(true)

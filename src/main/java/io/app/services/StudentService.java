@@ -13,8 +13,10 @@ public interface StudentService {
     public ApiResponse studentRegistration(String authToken,
                                            StudentDto studentDto,
                                            Long batchId,
-                                           MultipartFile profilePic) throws IOException;
-    public ApiResponse assignBatch(String authToken,long studentId,long batchId);
+                                           MultipartFile profilePic,
+                                           int joiningYear,
+                                           int joiningMonth) throws IOException;
+    public ApiResponse assignBatch(String authToken,long studentId,long batchId,int startYear,int startMonth);
     public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent);
     public List<StudentDto> allStudentByBatch(Long batchId);
     public ApiResponse isStudentExists(String mobileNumber);

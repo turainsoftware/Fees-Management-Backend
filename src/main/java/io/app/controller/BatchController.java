@@ -5,12 +5,14 @@ import io.app.dto.BatchDto;
 import io.app.model.Batch;
 import io.app.services.BatchService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Set;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/batch")
 @RequiredArgsConstructor

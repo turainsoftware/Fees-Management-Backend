@@ -42,6 +42,4 @@ public class StudentBatchEnrollment {
         this.updatedAt=new Date();
     }
 
-
-
 }

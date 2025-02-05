@@ -28,18 +28,22 @@ public class StudentController {
     public ApiResponse createStudent(@RequestHeader("Authorization") String authToken,
                                      @RequestParam(name = "student") String student,
                                      @RequestParam(name = "batchId") Long batchId,
-                                     @RequestParam(name = "profile") MultipartFile profilePic) throws IOException {
+                                     @RequestParam(name = "profile") MultipartFile profilePic,
+                                     @RequestParam("joiningYear") int joiningYear,
+                                     @RequestParam("joiningMonth") int joinMonth) throws IOException {
         ObjectMapper objectMapper=new ObjectMapper();
         log.info("Entered in registration");
         StudentDto studentDto=objectMapper.readValue(student,StudentDto.class);
-        return service.studentRegistration(authToken,studentDto,batchId,profilePic);
+        return service.studentRegistration(authToken,studentDto,batchId,profilePic,joiningYear,joinMonth);
     }
 
     @PatchMapping("/assign-batch")
     public ApiResponse assignStudentToABatch(@RequestHeader("Authorization") String authToken,
                                              @RequestParam("studentId") long studentId,
-                                             @RequestParam("batchId") long batchId){
-        return service.assignBatch(authToken,studentId,batchId);
+                                             @RequestParam("batchId") long batchId,
+                                             @RequestParam("joiningYear") int startYear,
+                                             @RequestParam("joiningMonth") int startMonth){
+        return service.assignBatch(authToken,studentId,batchId,startYear,startMonth);
     }
 
     @GetMapping("/students")

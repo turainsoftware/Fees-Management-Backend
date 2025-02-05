@@ -43,21 +43,21 @@ public class BatchServiceImpl implements BatchService {
             throw new DuplicateFoundException("Teacher already has a batch scheduled between this time.");
         }
 
+        System.out.println(batchDto.getStartYear()+" "+batchDto.getStartMonth());
+//        if (!teacher.getBoards().stream().anyMatch((board)->board.getId().equals(batchDto.getBoard().getId()))){
+//            throw new ResourceNotFoundException("Board is not valid");
+//        }
+//        if(!teacher.getLanguages().stream().anyMatch((data)->data.getId().equals(batchDto.getLanguage().getId()))){
+//            throw new ResourceNotFoundException("Invalid Language");
+//        }
 
-        if (!teacher.getBoards().stream().anyMatch((board)->board.getId().equals(batchDto.getBoard().getId()))){
-            throw new ResourceNotFoundException("Board is not valid");
-        }
-        if(!teacher.getLanguages().stream().anyMatch((data)->data.getId().equals(batchDto.getLanguage().getId()))){
-            throw new ResourceNotFoundException("Invalid Language");
-        }
+//        if (batchDto.getSubjects()!=null && !teacher.getSubjects().containsAll(batchDto.getSubjects())){
+//            throw new ResourceNotFoundException("Invalid Subjects");
+//        }
 
-        if (batchDto.getSubjects()!=null && !teacher.getSubjects().containsAll(batchDto.getSubjects())){
-            throw new ResourceNotFoundException("Invalid Subjects");
-        }
-
-        if (batchDto.getClasses()!=null && !teacher.getClasses().containsAll(batchDto.getClasses())){
-            throw new ResourceNotFoundException("Invalid Classes");
-        }
+//        if (batchDto.getClasses()!=null && !teacher.getClasses().containsAll(batchDto.getClasses())){
+//            throw new ResourceNotFoundException("Invalid Classes");
+//        }
 
         Batch batch=modelMapper.map(batchDto,Batch.class);
         batch.setTeacher(teacher);
