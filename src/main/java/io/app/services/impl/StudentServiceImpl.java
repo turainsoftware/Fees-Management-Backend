@@ -1,18 +1,13 @@
 package io.app.services.impl;
 
 import io.app.dto.ApiResponse;
+import io.app.dto.BatchEndYearMonthProjection;
 import io.app.dto.StudentDto;
 import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.NotAllowedException;
 import io.app.excetptions.ResourceNotFoundException;
-import io.app.model.Batch;
-import io.app.model.Student;
-import io.app.model.StudentBatchEnrollment;
-import io.app.model.Teacher;
-import io.app.repository.BatchRepository;
-import io.app.repository.StudentBatchEnrollmentRepository;
-import io.app.repository.StudentRepository;
-import io.app.repository.TeacherRepository;
+import io.app.model.*;
+import io.app.repository.*;
 import io.app.services.JwtService;
 import io.app.services.StudentService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +34,8 @@ public class StudentServiceImpl implements StudentService {
     private final BatchRepository batchRepository;
     private final ModelMapper modelMapper;
     private final StudentBatchEnrollmentRepository studentBatchEnrollmentRepository;
+    private final FeesRepository feesRepository;
+
 
     private final static long MAX_PICSIZE=200*1024;
 
@@ -65,11 +62,11 @@ public class StudentServiceImpl implements StudentService {
                 .orElseThrow(()->new ResourceNotFoundException("Invalid teacher credentials"));
 
         //previousOne
-//        Batch batch=Batch.builder()
-//                .id(batchId)
-//                .build();
+        Batch batch=Batch.builder()
+                .id(batchId)
+                .build();
 //        Updated one
-        Batch batch=batchRepository.findById(batchId)
+        BatchEndYearMonthProjection projection=batchRepository.findEndYearMonthById(batchId)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid batch"));
 
         // Batch Validation
@@ -103,13 +100,24 @@ public class StudentServiceImpl implements StudentService {
 
         Student savedStudent = repository.save(student);
 
-        StudentBatchEnrollment enrollment=StudentBatchEnrollment.builder()
-                .year(joiningYear)
-                .month(joiningMonth)
-                .student(savedStudent)
+//        StudentBatchEnrollment enrollment=StudentBatchEnrollment.builder()
+//                .year(joiningYear)
+//                .month(joiningMonth)
+//                .student(savedStudent)
+//                .batch(batch)
+//                .build();
+//        studentBatchEnrollmentRepository.save(enrollment);
+
+        Fees fees=Fees.builder()
                 .batch(batch)
+                .student(student)
+                .startYear(joiningYear)
+                .startMonth(joiningMonth)
+                .endMonth(projection.endMonth())
+                .endYear(projection.endYear())
+                .monthlyFees(projection.monthlyFees())
                 .build();
-        studentBatchEnrollmentRepository.save(enrollment);
+        feesRepository.save(fees);
 
         return ApiResponse.builder()
                 .status(true)
@@ -126,9 +134,15 @@ public class StudentServiceImpl implements StudentService {
         String mobileNumber=extractTeacher(authToken);
         Long teacherId=teacherRepository.findIdByPhone(mobileNumber)
                 .orElseThrow(()->new ResourceClosedException("Invalid credentials"));
+
         Batch batch=Batch.builder()
                 .id(batchId)
                 .build();
+        BatchEndYearMonthProjection projection=batchRepository.findEndYearMonthById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch!"));
+
+        System.out.println(projection.endMonth()+" "+projection.endYear());
+
         Teacher teacher=Teacher.builder()
                 .id(teacherId)
                 .build();
@@ -143,13 +157,25 @@ public class StudentServiceImpl implements StudentService {
         }
         Student savedStudent=repository.save(student);
 
-        StudentBatchEnrollment studentBatchEnrollment=StudentBatchEnrollment.builder()
+//        StudentBatchEnrollment studentBatchEnrollment=StudentBatchEnrollment.builder()
+//                .batch(batch)
+//                .student(savedStudent)
+//                .year(startYear)
+//                .month(startMonth)
+//                .build();
+//        studentBatchEnrollmentRepository.save(studentBatchEnrollment);
+
+        Fees fees=Fees.builder()
+                .startMonth(startMonth)
+                .startYear(startYear)
+                .endYear(projection.endYear())
+                .endMonth(projection.endMonth())
                 .batch(batch)
                 .student(savedStudent)
-                .year(startYear)
-                .month(startMonth)
+                .monthlyFees(projection.monthlyFees())
                 .build();
-        studentBatchEnrollmentRepository.save(studentBatchEnrollment);
+
+        feesRepository.save(fees);
 
         return ApiResponse.builder()
                 .status(true)

@@ -30,15 +30,20 @@ public class Fees {
     @JoinColumn(name = "batchId",nullable = false)
     private Batch batch;
 
+    @Column(nullable = false)
     private int startYear;
+    @Column(nullable = false)
     private int startMonth;
+    @Column(nullable = false)
     private int endYear;
+    @Column(nullable = false)
     private int endMonth;
 
     private double totalFees;
     private double totalPaid;
     private double totalDue;
 
+    @Column(nullable = false)
     private double monthlyFees;
 
 
@@ -46,6 +51,7 @@ public class Fees {
     private List<FeesHistory> feesHistories=new ArrayList<>();
 
 
+    @PrePersist
     public void createFees(){
         YearMonth start = YearMonth.of(startYear, startMonth);
         YearMonth end = YearMonth.of(endYear, endMonth);
