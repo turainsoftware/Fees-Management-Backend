@@ -64,9 +64,14 @@ public class StudentServiceImpl implements StudentService {
         Teacher teacher=teacherRepository.findByPhone(teacherPhone)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid teacher credentials"));
 
-        Batch batch=Batch.builder()
-                .id(batchId)
-                .build();
+        //previousOne
+//        Batch batch=Batch.builder()
+//                .id(batchId)
+//                .build();
+//        Updated one
+        Batch batch=batchRepository.findById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid batch"));
+
         // Batch Validation
 //        Set<Batch> batches = teacher.getBatches().stream().filter((item)->{
 //            return item.getId().equals(batchId);

@@ -29,12 +29,13 @@ public class StudentController {
                                      @RequestParam(name = "student") String student,
                                      @RequestParam(name = "batchId") Long batchId,
                                      @RequestParam(name = "profile") MultipartFile profilePic,
-                                     @RequestParam("joiningYear") int joiningYear,
+                                     @RequestParam("joiningYear") int joinYear,
                                      @RequestParam("joiningMonth") int joinMonth) throws IOException {
         ObjectMapper objectMapper=new ObjectMapper();
         log.info("Entered in registration");
+        System.out.println(joinYear+" "+joinMonth);
         StudentDto studentDto=objectMapper.readValue(student,StudentDto.class);
-        return service.studentRegistration(authToken,studentDto,batchId,profilePic,joiningYear,joinMonth);
+        return service.studentRegistration(authToken,studentDto,batchId,profilePic,joinYear,joinMonth);
     }
 
     @PatchMapping("/assign-batch")
@@ -43,6 +44,7 @@ public class StudentController {
                                              @RequestParam("batchId") long batchId,
                                              @RequestParam("joiningYear") int startYear,
                                              @RequestParam("joiningMonth") int startMonth){
+        System.out.println(startYear+" "+startMonth);
         return service.assignBatch(authToken,studentId,batchId,startYear,startMonth);
     }
 

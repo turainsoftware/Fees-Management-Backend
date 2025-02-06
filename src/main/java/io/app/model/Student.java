@@ -55,9 +55,9 @@ public class Student {
     )
     private Set<Teacher> teachers;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Months joiningMonth;
+//    @Enumerated(EnumType.STRING)
+//    @Column(nullable = false)
+//    private Months joiningMonth;
 
     @ManyToOne
     @JoinColumn(name = "classId", nullable = false)
