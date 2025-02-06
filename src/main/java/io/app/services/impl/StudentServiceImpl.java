@@ -51,10 +51,10 @@ public class StudentServiceImpl implements StudentService {
             throw new NotAllowedException("Image size should be less than 200KB");
         }
         // Student Validation
-        boolean isStudentExist=repository.existsByPhone(studentDto.getPhone());
-        if (isStudentExist){
-            throw new DuplicateFoundException("Student Already exists do Assign a batch");
-        }
+//        boolean isStudentExist=repository.existsByPhone(studentDto.getPhone());
+//        if (isStudentExist){
+//            throw new DuplicateFoundException("Student Already exists do Assign a batch");
+//        }
 
         // Teacher Validation
         String teacherPhone=extractTeacher(authToken);
