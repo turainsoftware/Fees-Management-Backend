@@ -23,7 +23,7 @@ public class ApplicationConfig {
     @Bean
     public UserDetailsService userDetailsService(){
         return phoneNumber->teacherRepository.findByPhone(phoneNumber)
-                .orElseThrow(()->new ResourceNotFoundException("User not registered"));
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
     }
 
     @Bean

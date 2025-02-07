@@ -31,7 +31,8 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TeacherDto profile(String authToken) {
-        Teacher teacher=repository.findByPhone(getMobileByToken(authToken))
+        String mobileNumber=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobileNumber)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
         TeacherDto teacherDto=modelMapper.map(teacher,TeacherDto.class);
         return teacherDto;
