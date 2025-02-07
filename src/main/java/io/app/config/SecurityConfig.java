@@ -24,9 +24,6 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-
-
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.csrf(csrf->csrf.disable())
@@ -37,7 +34,8 @@ public class SecurityConfig {
                                 "/api/v1/language/**",
                                 "/api/v1/subjects/**",
                                 "/swagger-ui/**",
-                                "/v3/api-docs/**")
+                                "/v3/api-docs/**",
+                                "/api/v1/file/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
@@ -64,4 +62,5 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
+
 }

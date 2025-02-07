@@ -34,3 +34,5 @@ build/
 application.yaml
 application-prod.yaml
 application-test.yaml
+
+src/main/resources/static/uploads/profile/

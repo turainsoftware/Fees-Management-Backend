@@ -5,6 +5,7 @@ import com.cloudinary.utils.ObjectUtils;
 import io.app.dto.ApiResponse;
 import io.app.dto.ResponseToken;
 import io.app.excetptions.DuplicateFoundException;
+import io.app.excetptions.NotAllowedException;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.Teacher;
 import io.app.repository.TeacherRepository;
@@ -30,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
     private final JwtService jwtService;
     private final FileServiceImpl fileService;
 
+    private final static long MAX_PIC_SIZE=200*1024;
+
 
     @Override
     public ApiResponse login(String phoneNumber) {
@@ -47,6 +50,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse signup(Teacher teacher, MultipartFile profilePic) throws IOException {
+        if (profilePic.getSize()>MAX_PIC_SIZE){
+            throw new NotAllowedException("Image size should be less than 200KB");
+        }
         boolean isTeacherExists=repository.existsByPhone(teacher.getPhone());
         if (isTeacherExists){
             throw new DuplicateFoundException("Teacher already exists");
