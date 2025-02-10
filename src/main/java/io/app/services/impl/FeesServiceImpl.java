@@ -33,14 +33,13 @@ public class FeesServiceImpl implements FeesService {
     public ApiResponse recordPayment(long batchId, long studentId, PaymentRequest paymentRequest) {
         Fees fees=feesRepository.findByStudentIdAndBatchId(studentId,batchId)
                 .orElseThrow(()->new ResourceNotFoundException("Fees not found for the batch or student"));
-
         YearMonth paymentYm=YearMonth.of(paymentRequest.getYear(),paymentRequest.getMonth());
         YearMonth startYm=YearMonth.of(fees.getStartYear(),fees.getEndMonth());
         YearMonth endYm=YearMonth.of(fees.getEndYear(),fees.getEndMonth());
 
-        if(paymentYm.isBefore(startYm) || paymentYm.isAfter(endYm)){
-            throw new NotAllowedException("Payment date is outside the fees period");
-        }
+//        if(paymentYm.isBefore(startYm) || paymentYm.isAfter(endYm)){
+//            throw new NotAllowedException("Payment date is outside the fees period");
+//        }
 
         boolean isPaymentExist=fees.getFeesHistories().stream()
                 .anyMatch(h->h.getMonth()==paymentRequest.getMonth() && h.getYear()==paymentRequest.getYear());
@@ -61,7 +60,10 @@ public class FeesServiceImpl implements FeesService {
         fees.setTotalPaid(fees.getTotalPaid()+paymentRequest.getAmountPaid());
         fees.setTotalDue(fees.getTotalFees()-fees.getTotalPaid());
         feesRepository.save(fees);
-        return null;
+        return ApiResponse.builder()
+                .message("Successfully paid")
+                .status(true)
+                .build();
     }
 
     @Override
