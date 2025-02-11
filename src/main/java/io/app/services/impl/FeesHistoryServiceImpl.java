@@ -51,6 +51,19 @@ public class FeesHistoryServiceImpl implements FeesHistoryService {
         return result;
     }
 
+    @Override
+    public List<TeacherFeesHistoryDto> feesByTeacherInRange(String authToken, int pageNo, int size) {
+        String phone=getMobileByToken(authToken);
+        boolean isTeacherExist=teacherRepository.existsByPhone(phone);
+        if(!isTeacherExist){
+            throw new ResourceNotFoundException("Invalid Teacher Identity");
+        }
+        Pageable pageable=PageRequest.of(pageNo,size);
+        List<TeacherFeesHistoryDto> result=repository.find10FeesHistoryByTeacherPhone(phone,pageable);
+
+        return result;
+    }
+
 
     public String getMobileByToken(String token){
         token=token.substring(7);

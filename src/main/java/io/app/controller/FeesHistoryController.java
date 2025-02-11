@@ -4,10 +4,7 @@ import io.app.dto.TeacherFeesHistoryDto;
 import io.app.services.impl.FeesHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.w3c.dom.stylesheets.LinkStyle;
 
 import java.util.List;
@@ -30,6 +27,14 @@ public class FeesHistoryController {
             @RequestHeader("Authorization") String authToken
     ){
         return ResponseEntity.ok(service.latestFeesByTeacher(authToken));
+    }
+
+    @GetMapping("/teacher/range")
+    public ResponseEntity<? extends List> getRangeFeesHistory(
+            @RequestHeader("Authorization") String authToken,
+            @RequestParam(value = "pageNo",defaultValue = "0") int pageNo,
+            @RequestParam(value = "size",defaultValue = "10") int size){
+        return ResponseEntity.ok(service.feesByTeacherInRange(authToken,pageNo,size));
     }
 
 }
