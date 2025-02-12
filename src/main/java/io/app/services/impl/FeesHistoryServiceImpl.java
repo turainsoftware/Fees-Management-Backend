@@ -1,5 +1,7 @@
 package io.app.services.impl;
 
+import io.app.dto.FeesAnalysisResponse;
+import io.app.dto.FeesSummary;
 import io.app.dto.TeacherFeesHistoryDto;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.Teacher;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -62,6 +65,49 @@ public class FeesHistoryServiceImpl implements FeesHistoryService {
         List<TeacherFeesHistoryDto> result=repository.find10FeesHistoryByTeacherPhone(phone,pageable);
 
         return result;
+    }
+
+    @Override
+    public FeesAnalysisResponse feesAnalysisByTeacherAndMonths(String authToken) {
+        String mobile=getMobileByToken(authToken);
+        long teacherId=teacherRepository.findIdByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Teacher"));
+        Teacher teacher=Teacher.builder()
+                .id(teacherId)
+                .build();
+
+        LocalDate currentDate=LocalDate.now();
+        int currentYear=currentDate.getYear();
+        int currentMonth=currentDate.getMonthValue();
+
+        LocalDate previousDate=currentDate.minusMonths(1);
+        int previousYear=previousDate.getYear();
+        int previousMonth=previousDate.getMonthValue();
+
+        List<FeesSummary> result=repository.findFeesSummaryByTeacherAndMonths(teacher,currentYear,currentMonth,previousYear,previousMonth);
+
+        double currentMonthFees=0;
+        double previousMonthFees=0;
+
+        for (FeesSummary fees:result){
+            if (fees.year()==currentYear && fees.month()==currentMonth){
+                currentMonthFees+=fees.totalAmountPaid();
+            }else if(fees.year()==previousYear && fees.month()==previousMonth){
+                previousMonthFees+=fees.totalAmountPaid();
+            }
+        }
+
+        double percentage=0;
+        if (previousMonthFees!=0){
+            percentage=((currentMonthFees-previousMonthFees)/previousMonthFees)*100;
+        }
+
+        return FeesAnalysisResponse.builder()
+                .trend(percentage>=0?"Increased":"Decreased")
+                .percentageChange(percentage)
+                .currentMonthFees(currentMonthFees)
+                .previousMonthFees(previousMonthFees)
+                .build();
     }
 
 

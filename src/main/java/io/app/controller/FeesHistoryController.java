@@ -1,5 +1,6 @@
 package io.app.controller;
 
+import io.app.dto.FeesAnalysisResponse;
 import io.app.dto.TeacherFeesHistoryDto;
 import io.app.services.impl.FeesHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,13 @@ public class FeesHistoryController {
             @RequestParam(value = "pageNo",defaultValue = "0") int pageNo,
             @RequestParam(value = "size",defaultValue = "10") int size){
         return ResponseEntity.ok(service.feesByTeacherInRange(authToken,pageNo,size));
+    }
+
+    @GetMapping("/analysis")
+    public ResponseEntity<FeesAnalysisResponse> getMonthlyAnalysis(
+            @RequestHeader("Authorization") String authToken
+    ){
+        return ResponseEntity.ok(service.feesAnalysisByTeacherAndMonths(authToken));
     }
 
 }
