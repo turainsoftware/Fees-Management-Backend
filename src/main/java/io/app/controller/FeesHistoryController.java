@@ -5,8 +5,6 @@ import io.app.services.impl.FeesHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.stylesheets.LinkStyle;
-
 import java.util.List;
 
 @RestController
@@ -30,7 +28,7 @@ public class FeesHistoryController {
     }
 
     @GetMapping("/teacher/range")
-    public ResponseEntity<? extends List> getRangeFeesHistory(
+    public ResponseEntity<List<TeacherFeesHistoryDto>> getRangeFeesHistory(
             @RequestHeader("Authorization") String authToken,
             @RequestParam(value = "pageNo",defaultValue = "0") int pageNo,
             @RequestParam(value = "size",defaultValue = "10") int size){
