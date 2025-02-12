@@ -1,5 +1,6 @@
 package io.app.services;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.model.Batch;
@@ -19,4 +20,5 @@ public interface BatchService {
     public boolean hasTimeConflict(Teacher teacher, LocalTime startTime,LocalTime endTime, Set<Days> days);
     public String extractJwt(String authToken);
 
+    public AnalysisResponse batchAnalysis(String authToken);
 }

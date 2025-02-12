@@ -1,6 +1,6 @@
 package io.app.controller;
 
-import io.app.dto.FeesAnalysisResponse;
+import io.app.dto.AnalysisResponse;
 import io.app.dto.TeacherFeesHistoryDto;
 import io.app.services.impl.FeesHistoryServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +37,7 @@ public class FeesHistoryController {
     }
 
     @GetMapping("/analysis")
-    public ResponseEntity<FeesAnalysisResponse> getMonthlyAnalysis(
+    public ResponseEntity<AnalysisResponse> getMonthlyAnalysis(
             @RequestHeader("Authorization") String authToken
     ){
         return ResponseEntity.ok(service.feesAnalysisByTeacherAndMonths(authToken));

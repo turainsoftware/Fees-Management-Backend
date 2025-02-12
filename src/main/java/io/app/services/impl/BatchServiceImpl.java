@@ -1,5 +1,6 @@
 package io.app.services.impl;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.excetptions.DuplicateFoundException;
@@ -109,5 +110,29 @@ public class BatchServiceImpl implements BatchService {
     public String extractJwt(String authToken) {
         authToken=authToken.substring(7);
         return jwtService.extractUsername(authToken);
+    }
+
+    @Override
+    public AnalysisResponse batchAnalysis(String authToken) {
+        String mobileNumber=extractJwt(authToken);
+        long teacherId=teacherRepository.findIdByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Teacher"));
+
+        long currentMonthCount=repository.countBatchesByTeacherInCurrentMonth(teacherId);
+        long previousMonthCount=repository.countBatchesByTeacherInPreviousMonth(teacherId);
+        long totalBatches=repository.countBatchesByTeacherId(teacherId);
+
+        double percentage=0;
+        if (previousMonthCount==0){
+            percentage=100;
+        }else{
+            percentage=((currentMonthCount-previousMonthCount)/previousMonthCount)*100;
+        }
+
+        return AnalysisResponse.builder()
+                .current(totalBatches)
+                .percentage(percentage)
+                .trend(percentage>=0?"Increased":"Decreased")
+                .build();
     }
 }

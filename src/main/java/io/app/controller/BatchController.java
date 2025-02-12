@@ -1,5 +1,6 @@
 package io.app.controller;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.model.Batch;
@@ -7,6 +8,7 @@ import io.app.services.BatchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +32,13 @@ public class BatchController {
     @GetMapping
     public List<BatchDto> getAllBatch(@RequestHeader("Authorization") String authToken){
         return service.getAllBatch(authToken);
+    }
+
+    @GetMapping("/analysis")
+    public ResponseEntity<AnalysisResponse> analyse(
+            @RequestHeader("Authorization") String authToken){
+        System.out.println("inside batch analysis");
+        return ResponseEntity.ok(service.batchAnalysis(authToken));
     }
 
 }

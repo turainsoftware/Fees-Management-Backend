@@ -22,4 +22,14 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
     @Query("SELECT new io.app.dto.BatchEndYearMonthProjection(b.id,b.endYear,b.endMonth,b.monthlyFees) FROM Batch b WHERE b.id = :id")
     public Optional<BatchEndYearMonthProjection> findEndYearMonthById(@Param("id") Long id);
 
+
+    @Query("SELECT COUNT(b) FROM Batch b WHERE b.teacher.id = :teacherId AND MONTH(b.createdAt) = MONTH(CURRENT_DATE) AND YEAR(b.createdAt) = YEAR(CURRENT_DATE)")
+    Long countBatchesByTeacherInCurrentMonth(Long teacherId);
+
+    @Query("SELECT COUNT(b) FROM Batch b WHERE b.teacher.id = :teacherId")
+    Long countBatchesByTeacherId(Long teacherId);
+
+    @Query("SELECT COUNT(b) FROM Batch b WHERE b.teacher.id = :teacherId AND MONTH(b.createdAt) = MONTH(CURRENT_DATE - 1 MONTH) AND YEAR(b.createdAt) = YEAR(CURRENT_DATE - 1 MONTH)")
+    Long countBatchesByTeacherInPreviousMonth(Long teacherId);
+
 }

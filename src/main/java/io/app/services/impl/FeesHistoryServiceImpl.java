@@ -1,6 +1,6 @@
 package io.app.services.impl;
 
-import io.app.dto.FeesAnalysisResponse;
+import io.app.dto.AnalysisResponse;
 import io.app.dto.FeesSummary;
 import io.app.dto.TeacherFeesHistoryDto;
 import io.app.excetptions.ResourceNotFoundException;
@@ -68,7 +68,7 @@ public class FeesHistoryServiceImpl implements FeesHistoryService {
     }
 
     @Override
-    public FeesAnalysisResponse feesAnalysisByTeacherAndMonths(String authToken) {
+    public AnalysisResponse feesAnalysisByTeacherAndMonths(String authToken) {
         String mobile=getMobileByToken(authToken);
         long teacherId=teacherRepository.findIdByPhone(mobile)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Teacher"));
@@ -102,11 +102,11 @@ public class FeesHistoryServiceImpl implements FeesHistoryService {
             percentage=((currentMonthFees-previousMonthFees)/previousMonthFees)*100;
         }
 
-        return FeesAnalysisResponse.builder()
+        return AnalysisResponse.builder()
                 .trend(percentage>=0?"Increased":"Decreased")
-                .percentageChange(percentage)
-                .currentMonthFees(currentMonthFees)
-                .previousMonthFees(previousMonthFees)
+                .percentage(percentage)
+                .current(currentMonthFees)
+                .previous(previousMonthFees)
                 .build();
     }
 

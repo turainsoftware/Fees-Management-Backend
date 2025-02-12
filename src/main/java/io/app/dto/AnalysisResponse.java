@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Data
-public class FeesAnalysisResponse {
-    private double currentMonthFees;
-    private double previousMonthFees;
-    private double percentageChange;
+public class AnalysisResponse {
+    private double current;
+    private double previous;
+    private double percentage;
     private String trend;
 }
