@@ -23,4 +23,6 @@ public interface TeacherService {
     public Set<BatchDto> allBatch(String authToken);
 
     AnalysisResponse getStudentAnalysis(String authToken);
+
+    AnalysisResponse getSubjectAnalysis(String authToken);
 }

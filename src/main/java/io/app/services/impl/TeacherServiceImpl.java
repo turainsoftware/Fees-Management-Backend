@@ -128,6 +128,22 @@ public class TeacherServiceImpl implements TeacherService {
                 .build();
     }
 
+    @Override
+    public AnalysisResponse getSubjectAnalysis(String authToken) {
+        String mobileNumber=getMobileByToken(authToken);
+        long teacherId=repository.findIdByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Teacher Credentials"));
+
+        long totalSubjects=repository.countSubjectsByTeacherId(teacherId);
+
+
+        return AnalysisResponse.builder()
+                .current(totalSubjects)
+                .trend("Increased")
+                .percentage(100)
+                .build();
+    }
+
 
     public String getMobileByToken(String token){
         token=token.substring(7);

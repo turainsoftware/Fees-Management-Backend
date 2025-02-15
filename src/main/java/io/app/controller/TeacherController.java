@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
@@ -65,9 +66,16 @@ public class TeacherController {
 
 
     @GetMapping("/student-analysis")
+    @ResponseStatus(HttpStatus.OK)
     public AnalysisResponse studentAnalyse(
             @RequestHeader("Authorization") String authToken){
         return service.getStudentAnalysis(authToken);
+    }
+
+    @GetMapping("/subject-analysis")
+    public AnalysisResponse subjectsAnalysis(
+            @RequestHeader("Authorization") String authToken){
+        return service.getSubjectAnalysis(authToken);
     }
 
 }

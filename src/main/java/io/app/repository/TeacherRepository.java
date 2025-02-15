@@ -30,4 +30,7 @@ public interface TeacherRepository extends JpaRepository<Teacher,Long> {
             @Param("startDate") Date startDate,
             @Param("endDate") Date endDate);
 
+    @Query("SELECT COUNT(s) FROM Teacher t JOIN t.subjects s WHERE t.id = :teacherId")
+    Long countSubjectsByTeacherId(@Param("teacherId") Long teacherId);
+
 }
