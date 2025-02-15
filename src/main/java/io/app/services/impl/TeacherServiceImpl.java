@@ -1,5 +1,6 @@
 package io.app.services.impl;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.dto.TeacherDto;
@@ -15,10 +16,7 @@ import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,6 +94,38 @@ public class TeacherServiceImpl implements TeacherService {
             return modelMapper.map(item,BatchDto.class);
         }).collect(Collectors.toSet());
         return result;
+    }
+
+    @Override
+    public AnalysisResponse getStudentAnalysis(String authToken) {
+        String mobileNumber=getMobileByToken(authToken);
+        long teacherId=repository.findIdByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+
+        Calendar calendar=Calendar.getInstance();
+        Date endDate=calendar.getTime();
+        calendar.add(Calendar.MONTH,-1);
+        Date startDate=calendar.getTime();
+
+        long totalStudents=repository.countStudentsByTeacherId(teacherId);
+
+        long currentMonthsStudents=repository.countStudentsByTeacherIdAndDateRange(
+                teacherId,
+                startDate,
+                endDate
+        );
+
+        double percentage=0;
+        if(totalStudents!=0){
+            percentage = ((double) currentMonthsStudents / totalStudents) * 100;
+        }
+        String trend=percentage>=0?"Increased":"Decreased";
+
+        return AnalysisResponse.builder()
+                .trend(trend)
+                .percentage(percentage)
+                .current(totalStudents)
+                .build();
     }
 
 

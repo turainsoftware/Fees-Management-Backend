@@ -1,5 +1,6 @@
 package io.app.controller;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.dto.TeacherDto;
@@ -62,5 +63,11 @@ public class TeacherController {
         return service.allBatch(authToken);
     }
 
+
+    @GetMapping("/student-analysis")
+    public AnalysisResponse studentAnalyse(
+            @RequestHeader("Authorization") String authToken){
+        return service.getStudentAnalysis(authToken);
+    }
 
 }

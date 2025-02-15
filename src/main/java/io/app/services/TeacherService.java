@@ -1,5 +1,6 @@
 package io.app.services;
 
+import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.dto.TeacherDto;
@@ -20,4 +21,6 @@ public interface TeacherService {
     public ApiResponse updateLanguage(Set<Language> languages, String token);
 
     public Set<BatchDto> allBatch(String authToken);
+
+    AnalysisResponse getStudentAnalysis(String authToken);
 }
