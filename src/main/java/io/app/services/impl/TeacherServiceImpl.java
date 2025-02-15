@@ -85,6 +85,12 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public boolean teacherExistByMobileNumber(String mobileNumber) {
+        boolean status=repository.existsByPhone(mobileNumber);
+        return status;
+    }
+
+    @Override
     public Set<BatchDto> allBatch(String authToken) {
         String phone=getMobileByToken(authToken);
         Teacher teacher=repository.findByPhone(phone)

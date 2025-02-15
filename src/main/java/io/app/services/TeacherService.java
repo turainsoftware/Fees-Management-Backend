@@ -19,7 +19,7 @@ public interface TeacherService {
     public ApiResponse updateBoards(Set<Board> boards, String token);
     public ApiResponse updateSubjects(Set<Subject> subjects, String token);
     public ApiResponse updateLanguage(Set<Language> languages, String token);
-
+    public boolean teacherExistByMobileNumber(String mobileNumber);
     public Set<BatchDto> allBatch(String authToken);
 
     AnalysisResponse getStudentAnalysis(String authToken);

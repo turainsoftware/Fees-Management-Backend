@@ -78,4 +78,9 @@ public class TeacherController {
         return service.getSubjectAnalysis(authToken);
     }
 
+    @GetMapping("/check-by-mobile")
+    public boolean teacherExistByMobileNumber(@RequestParam("mobile") String mobile){
+        return service.teacherExistByMobileNumber(mobile);
+    }
+
 }
