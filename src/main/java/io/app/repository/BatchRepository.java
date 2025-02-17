@@ -1,6 +1,7 @@
 package io.app.repository;
 
 import io.app.dto.BatchEndYearMonthProjection;
+import io.app.dto.Projections.BatchProjection;
 import io.app.model.Batch;
 import io.app.model.Teacher;
 import org.springframework.cache.annotation.Cacheable;
@@ -31,5 +32,13 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
 
     @Query("SELECT COUNT(b) FROM Batch b WHERE b.teacher.id = :teacherId AND MONTH(b.createdAt) = MONTH(CURRENT_DATE - 1 MONTH) AND YEAR(b.createdAt) = YEAR(CURRENT_DATE - 1 MONTH)")
     Long countBatchesByTeacherInPreviousMonth(Long teacherId);
+
+    @Query("SELECT new io.app.dto.Projections.BatchProjection(" +
+            "b.id,b.name,b.startYear,b.endYear,b.startMonth," +
+            "b.endMonth,b.startTime,b.endTime,b.days," +
+            "b.monthlyFees,b.monthlyExamFees) FROM Batch b WHERE" +
+            " b.teacher.id=:teacherId")
+    List<BatchProjection> findByTeacherWithSpecificDetails(@Param("teacherId") long teacherId);
+
 
 }

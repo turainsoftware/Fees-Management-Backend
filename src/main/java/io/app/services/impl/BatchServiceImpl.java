@@ -3,6 +3,7 @@ package io.app.services.impl;
 import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
+import io.app.dto.Projections.BatchProjection;
 import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.Batch;
@@ -135,4 +136,15 @@ public class BatchServiceImpl implements BatchService {
                 .trend(percentage>=0?"Increased":"Decreased")
                 .build();
     }
+
+    @Override
+    public List<BatchProjection> getAllBatchDetailsWithSpecificDetails(String authToken) {
+        String mobileNumber=extractJwt(authToken);
+        long teacherId=teacherRepository.findIdByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Teachers Credentials"));
+
+        List< BatchProjection> result=repository.findByTeacherWithSpecificDetails(teacherId);
+        return result;
+    }
+
 }

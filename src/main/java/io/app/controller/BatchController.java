@@ -3,6 +3,7 @@ package io.app.controller;
 import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
+import io.app.dto.Projections.BatchProjection;
 import io.app.model.Batch;
 import io.app.services.BatchService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +40,11 @@ public class BatchController {
             @RequestHeader("Authorization") String authToken){
         System.out.println("inside batch analysis");
         return ResponseEntity.ok(service.batchAnalysis(authToken));
+    }
+
+    @GetMapping("/all-specific-details")
+    public List<BatchProjection> specificBathesDetails(@RequestHeader("Authorization") String authToken){
+        return service.getAllBatchDetailsWithSpecificDetails(authToken);
     }
 
 }

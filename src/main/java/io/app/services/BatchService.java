@@ -3,6 +3,7 @@ package io.app.services;
 import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
+import io.app.dto.Projections.BatchProjection;
 import io.app.model.Batch;
 import io.app.model.Days;
 import io.app.model.Teacher;
@@ -21,4 +22,5 @@ public interface BatchService {
     public String extractJwt(String authToken);
 
     public AnalysisResponse batchAnalysis(String authToken);
+    public List<BatchProjection> getAllBatchDetailsWithSpecificDetails(String authToken);
 }
