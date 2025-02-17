@@ -47,4 +47,10 @@ public class BatchController {
         return service.getAllBatchDetailsWithSpecificDetails(authToken);
     }
 
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public BatchDto batchById(@PathVariable("id") long id){
+        return service.getBatchById(id);
+    }
+
 }

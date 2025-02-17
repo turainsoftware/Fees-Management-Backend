@@ -23,4 +23,5 @@ public interface BatchService {
 
     public AnalysisResponse batchAnalysis(String authToken);
     public List<BatchProjection> getAllBatchDetailsWithSpecificDetails(String authToken);
+    public BatchDto getBatchById(long id);
 }

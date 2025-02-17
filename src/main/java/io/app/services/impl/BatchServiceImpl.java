@@ -147,4 +147,12 @@ public class BatchServiceImpl implements BatchService {
         return result;
     }
 
+    @Override
+    public BatchDto getBatchById(long id) {
+        Batch batch=repository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch Id"));
+        BatchDto batchDto=modelMapper.map(batch,BatchDto.class);
+        return batchDto;
+    }
+
 }
