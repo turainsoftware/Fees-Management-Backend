@@ -37,7 +37,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/api/v1/file/**",
                                 "/api/v1/state/**",
-                                "/api/v1/teacher/check-by-mobile")
+                                "/api/v1/teacher/check-by-mobile",
+                                "/api/v1/districts/**")
                         .permitAll()
                         .anyRequest()
                         .authenticated())
