@@ -41,4 +41,6 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
     List<BatchProjection> findByTeacherWithSpecificDetails(@Param("teacherId") long teacherId);
 
 
+    Optional<Batch> findByIdAndTeacher(long batchId,Teacher teacher);
+
 }

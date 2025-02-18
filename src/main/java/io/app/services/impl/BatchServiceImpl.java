@@ -14,6 +14,7 @@ import io.app.services.BatchService;
 import io.app.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -153,6 +154,26 @@ public class BatchServiceImpl implements BatchService {
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Batch Id"));
         BatchDto batchDto=modelMapper.map(batch,BatchDto.class);
         return batchDto;
+    }
+
+    @Override
+    public ApiResponse updateBatchFees(String authToken, long batchId,
+                                       double monthlyFees,double monthlyExamFees) {
+        String mobile=extractJwt(authToken);
+        long teacherId=teacherRepository.findIdByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Token"));
+        Teacher teacher=Teacher.builder()
+                .id(teacherId)
+                .build();
+        Batch batch=repository.findByIdAndTeacher(batchId,teacher)
+                .orElseThrow(()->new ResourceClosedException("Teacher do not have such batch!"));
+        batch.setMonthlyFees(monthlyFees);
+        batch.setMonthlyExamFees(monthlyExamFees);
+        repository.save(batch);
+        return ApiResponse.builder()
+                .message("Fees Details Updated Successfully")
+                .status(true)
+                .build();
     }
 
 }

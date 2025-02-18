@@ -53,4 +53,14 @@ public class BatchController {
         return service.getBatchById(id);
     }
 
+    @PatchMapping("/update-fees")
+    public ApiResponse updateBatchFeesDetails(
+            @RequestHeader("Authorization") String authToken,
+            @RequestParam("batchId") long batchId,
+            @RequestParam("monthlyFees") double monthlyFees,
+            @RequestParam("monthlyExamFees") double monthlyExamFees){
+        return service.updateBatchFees(authToken,batchId,monthlyFees,monthlyExamFees);
+    }
+
+
 }
