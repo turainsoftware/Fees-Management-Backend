@@ -3,6 +3,7 @@ package io.app.services.impl;
 import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
+import io.app.dto.Projections.TeacherProjection;
 import io.app.dto.TeacherDto;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.*;
@@ -33,6 +34,14 @@ public class TeacherServiceImpl implements TeacherService {
         Teacher teacher=repository.findByPhone(mobileNumber)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
         TeacherDto teacherDto=modelMapper.map(teacher,TeacherDto.class);
+        return teacherDto;
+    }
+
+    @Override
+    public TeacherProjection profileLess(String authToken) {
+        String mobile= getMobileByToken(authToken);
+        TeacherProjection teacherDto=repository.findProfileLessByMobile(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
         return teacherDto;
     }
 

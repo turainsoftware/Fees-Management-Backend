@@ -1,5 +1,6 @@
 package io.app.repository;
 
+import io.app.dto.Projections.TeacherProjection;
 import io.app.model.Teacher;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,5 +33,8 @@ public interface TeacherRepository extends JpaRepository<Teacher,Long> {
 
     @Query("SELECT COUNT(s) FROM Teacher t JOIN t.subjects s WHERE t.id = :teacherId")
     Long countSubjectsByTeacherId(@Param("teacherId") Long teacherId);
+
+    @Query("SELECT new io.app.dto.Projections.TeacherProjection(t.name, t.phone, t.profilePic) FROM Teacher t WHERE t.phone = :mobile")
+    Optional<TeacherProjection> findProfileLessByMobile(@Param("mobile") String mobile);
 
 }

@@ -3,6 +3,7 @@ package io.app.controller;
 import io.app.dto.AnalysisResponse;
 import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
+import io.app.dto.Projections.TeacherProjection;
 import io.app.dto.TeacherDto;
 import io.app.model.*;
 import io.app.model.Class;
@@ -30,6 +31,13 @@ public class TeacherController {
     @GetMapping("/profile")
     public ResponseEntity<TeacherDto> profile(@RequestHeader("Authorization") String authHeader){
         return ResponseEntity.ok(service.profile(authHeader));
+    }
+
+    @GetMapping("/only-profile")
+    public ResponseEntity<TeacherProjection> profileLess(
+            @RequestHeader("Authorization") String authHeader
+    ){
+        return ResponseEntity.ok(service.profileLess(authHeader));
     }
 
     @PatchMapping("/class/update-classes")
