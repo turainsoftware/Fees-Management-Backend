@@ -159,6 +159,29 @@ public class TeacherServiceImpl implements TeacherService {
                 .build();
     }
 
+    @Override
+    public ApiResponse updateProfile(String authToken, String name,
+                                     String email, Gender gender) {
+        String mobile=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        teacher.setName(name);
+        if(email!=null && !email.isEmpty()){
+            teacher.setEmail(email);
+        }
+
+        if(gender!=null){
+            teacher.setGender(gender);
+        }
+
+        repository.save(teacher);
+
+        return ApiResponse.builder()
+                .message("Updated Successfully")
+                .status(true)
+                .build();
+    }
+
 
     public String getMobileByToken(String token){
         token=token.substring(7);

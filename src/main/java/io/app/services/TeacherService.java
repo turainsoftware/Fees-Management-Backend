@@ -27,4 +27,8 @@ public interface TeacherService {
     AnalysisResponse getStudentAnalysis(String authToken);
 
     AnalysisResponse getSubjectAnalysis(String authToken);
+
+    // Update Profile
+    public ApiResponse updateProfile(String authToken,String name,String email,Gender gender);
+
 }

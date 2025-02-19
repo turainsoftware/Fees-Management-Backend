@@ -18,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Provider;
 import java.util.List;
 import java.util.Set;
 
@@ -64,8 +65,6 @@ public class TeacherController {
         return ResponseEntity.ok(service.updateLanguage(languages,authToken));
     }
 
-
-
     @GetMapping("/batches")
     @ResponseStatus(HttpStatus.OK)
     public Set<BatchDto> allBatches(@RequestHeader("Authorization") String authToken){
@@ -90,5 +89,21 @@ public class TeacherController {
     public boolean teacherExistByMobileNumber(@RequestParam("mobile") String mobile){
         return service.teacherExistByMobileNumber(mobile);
     }
+
+
+
+    /*
+        *** Update Profile -- only{name,email,gender}
+     */
+    @PutMapping("/profile/update-profile")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse updateProfile(
+            @RequestHeader("Authorization") String authToken,
+            @RequestParam("name") String name,
+            @RequestParam(value = "email",required = false) String email,
+            @RequestParam("gender") Gender gender){
+        return service.updateProfile(authToken,name,email,gender);
+    }
+
 
 }
