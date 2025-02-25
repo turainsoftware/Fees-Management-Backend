@@ -190,6 +190,30 @@ public class TeacherServiceImpl implements TeacherService {
                 .build();
     }
 
+    @Override
+    public Set<Language> languages(String authToken) {
+        String mobile=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        return teacher.getLanguages();
+    }
+
+    @Override
+    public Set<Board> boards(String authToken) {
+        String mobile=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        return teacher.getBoards();
+    }
+
+    @Override
+    public Set<Class> classes(String authToken) {
+        String mobile=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        return teacher.getClasses();
+    }
+
 
     public String getMobileByToken(String token){
         token=token.substring(7);

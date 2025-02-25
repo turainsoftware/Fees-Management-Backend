@@ -112,5 +112,27 @@ public class TeacherController {
         return service.subjectsOfTeachers(authToken);
     }
 
+    @GetMapping("/classes")
+    public Set<Class> classesOfTeacher(
+            @RequestHeader("Authorization") String authToken
+    ){
+        return service.classes(authToken);
+    }
+
+    @GetMapping("/languages")
+    public Set<Language> languagesOfTeacher(
+            @RequestHeader("Authorization") String authToken
+    ){
+        return service.languages(authToken);
+    }
+
+    @GetMapping("/boards")
+    public Set<Board> boardsOfTeacher(
+            @RequestHeader("Authorization") String authToken
+    ){
+        return service.boards(authToken);
+    }
+
+
 
 }

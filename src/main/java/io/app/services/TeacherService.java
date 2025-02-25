@@ -32,4 +32,7 @@ public interface TeacherService {
     // Update Profile
     public ApiResponse updateProfile(String authToken,String name,String email,Gender gender);
 
+    public Set<Language> languages(String authToken);
+    public Set<Board> boards(String authToken);
+    public Set<Class> classes(String authToken);
 }
