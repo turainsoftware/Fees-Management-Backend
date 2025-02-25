@@ -8,6 +8,7 @@ import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.Batch;
 import io.app.model.Days;
+import io.app.model.Subject;
 import io.app.model.Teacher;
 import io.app.repository.*;
 import io.app.services.BatchService;
@@ -174,6 +175,87 @@ public class BatchServiceImpl implements BatchService {
                 .message("Fees Details Updated Successfully")
                 .status(true)
                 .build();
+    }
+
+    @Override
+    public ApiResponse updateBatchSubjects(long batchId, Set<Long> subjectsId) {
+        Batch batch=repository.findById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch Details"));
+        Set<Subject> subjects=subjectsId.stream().map((item)->{
+            return Subject.builder()
+                    .id(item)
+                    .build();
+        }).collect(Collectors.toSet());
+        batch.setSubjects(subjects);
+        repository.save(batch);
+        return ApiResponse.builder()
+                .status(true)
+                .message("Subjects Updated Successfully")
+                .build();
+    }
+
+    @Override
+    public ApiResponse updateBatchSchedule(String authToken, long batchId,
+                                           int startYear, int startMonth,
+                                           int endYear, int endMonth,
+                                           Set<Days> days, LocalTime startTime,
+                                           LocalTime endTime) {
+        String mobile=extractJwt(authToken);
+        long teacherId=teacherRepository.findIdByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        Teacher teacher=Teacher.builder()
+                .id(teacherId)
+                .build();
+
+        Batch batch=repository.findById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch"));
+
+        // Checking the overlap with days
+        if(hasTimeConflict(teacher,startTime,endTime,days,batchId)){
+            throw new ResourceNotFoundException("Teacher has Schedule batch! check free days");
+        }
+
+        batch.setDays(days);
+        batch.setStartTime(startTime);
+        batch.setEndTime(endTime);
+        batch.setStartYear(startYear);
+        batch.setEndYear(endYear);
+        batch.setEndMonth(endMonth);
+        batch.setStartMonth(startMonth);
+
+        repository.save(batch);
+
+        return ApiResponse.builder()
+                .status(true)
+                .message("Updated Successfully")
+                .build();
+    }
+
+    public boolean hasTimeConflict(Teacher teacher,
+                                   LocalTime newStartTime,
+                                   LocalTime newEndTime,
+                                   Set<Days> days,
+                                   long batchId) {
+        List<Batch> batches = repository.findByTeacher(teacher);
+        log.info("{}", teacher);
+
+        for (Batch existingBatch : batches) {
+            if(existingBatch.getId()==batchId){
+                System.out.println("yes");
+                continue;
+            }
+            if (existingBatch.getDays().stream().anyMatch(days::contains)) {
+                LocalTime existingStartTime = existingBatch.getStartTime();
+                LocalTime existingEndTime = existingBatch.getEndTime();
+
+                // Check for overlap
+                if (newStartTime.isBefore(existingEndTime) && newEndTime.isAfter(existingStartTime)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 }

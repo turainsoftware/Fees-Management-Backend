@@ -26,4 +26,10 @@ public interface BatchService {
     public BatchDto getBatchById(long id);
     public ApiResponse updateBatchFees(String authToken,long batchId,
                                        double monthlyFees,double monthlyExamFees);
+    public ApiResponse updateBatchSubjects(long batchId,Set<Long> subjectsId);
+    public ApiResponse updateBatchSchedule(String authToken,
+                                           long batchId,int startYear,
+                                           int startMonth,int endYear,
+                                           int endMonth,Set<Days> days,
+                                           LocalTime startTime,LocalTime endTime);
 }

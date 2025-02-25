@@ -112,6 +112,14 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public Set<Subject> subjectsOfTeachers(String authToken) {
+        String mobile=getMobileByToken(authToken);
+        Teacher teacher=repository.findByPhone(mobile)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        return teacher.getSubjects();
+    }
+
+    @Override
     public AnalysisResponse getStudentAnalysis(String authToken) {
         String mobileNumber=getMobileByToken(authToken);
         long teacherId=repository.findIdByPhone(mobileNumber)

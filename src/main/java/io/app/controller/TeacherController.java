@@ -105,5 +105,12 @@ public class TeacherController {
         return service.updateProfile(authToken,name,email,gender);
     }
 
+    @GetMapping("/subjects")
+    public Set<Subject> subjectsOfTeacher(
+            @RequestHeader("Authorization") String authToken
+    ){
+        return service.subjectsOfTeachers(authToken);
+    }
+
 
 }

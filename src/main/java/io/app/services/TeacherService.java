@@ -23,6 +23,7 @@ public interface TeacherService {
     public ApiResponse updateLanguage(Set<Language> languages, String token);
     public boolean teacherExistByMobileNumber(String mobileNumber);
     public Set<BatchDto> allBatch(String authToken);
+    public Set<Subject> subjectsOfTeachers(String authToken);
 
     AnalysisResponse getStudentAnalysis(String authToken);
 
