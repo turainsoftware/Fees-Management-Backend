@@ -6,18 +6,19 @@ import io.app.dto.BatchDto;
 import io.app.dto.Projections.BatchProjection;
 import io.app.excetptions.DuplicateFoundException;
 import io.app.excetptions.ResourceNotFoundException;
-import io.app.model.Batch;
-import io.app.model.Days;
-import io.app.model.Subject;
-import io.app.model.Teacher;
+import io.app.model.*;
+import io.app.model.Class;
 import io.app.repository.*;
 import io.app.services.BatchService;
 import io.app.services.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ResourceClosedException;
+import org.hibernate.type.descriptor.java.ObjectArrayJavaType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.sql.Time;
 import java.time.LocalTime;
@@ -228,6 +229,36 @@ public class BatchServiceImpl implements BatchService {
         return ApiResponse.builder()
                 .status(true)
                 .message("Updated Successfully")
+                .build();
+    }
+
+    @Override
+    public ApiResponse updateBatchDetails(
+            @RequestParam long batchId,
+            @RequestParam String name,
+            @RequestParam long languageId,
+            @RequestParam long boardId,
+            @RequestBody Set<Long> classesId) {
+        Batch batch=repository.findById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch"));
+        Language language=Language.builder()
+                .id(languageId)
+                .build();
+        Board board=Board.builder()
+                .id(boardId)
+                .build();
+        Set<Class> classes=classesId.stream().map((item)->Class.builder()
+                        .id(item)
+                        .build())
+                .collect(Collectors.toSet());
+        batch.setName(name);
+        batch.setLanguage(language);
+        batch.setBoard(board);
+        batch.setClasses(classes);
+        repository.save(batch);
+        return ApiResponse.builder()
+                .status(true)
+                .message("Successfully updated!")
                 .build();
     }
 

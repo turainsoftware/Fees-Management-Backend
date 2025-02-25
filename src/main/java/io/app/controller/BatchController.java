@@ -87,4 +87,14 @@ public class BatchController {
                 startMonth,endYear,endMonth,days,startTime,endTime);
     }
 
+    @PatchMapping("/update-details")
+    public ApiResponse updateBatchDetails(
+            @RequestParam("batchId") long batchId,
+            @RequestParam("batchName") String name,
+            @RequestParam("languageId") long languageId,
+            @RequestParam("boardId") long boardId,
+            @RequestBody Set<Long> classesId){
+        return service.updateBatchDetails(batchId,name,languageId,boardId,classesId);
+    }
+
 }

@@ -32,4 +32,5 @@ public interface BatchService {
                                            int startMonth,int endYear,
                                            int endMonth,Set<Days> days,
                                            LocalTime startTime,LocalTime endTime);
+    public ApiResponse updateBatchDetails(long batchId,String name,long languageId,long boardId,Set<Long> classesId);
 }
