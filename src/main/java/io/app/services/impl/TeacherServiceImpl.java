@@ -121,33 +121,53 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public AnalysisResponse getStudentAnalysis(String authToken) {
-        String mobileNumber=getMobileByToken(authToken);
-        long teacherId=repository.findIdByPhone(mobileNumber)
-                .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
+        String mobileNumber = getMobileByToken(authToken);
+        long teacherId = repository.findIdByPhone(mobileNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid Credentials"));
 
-        Calendar calendar=Calendar.getInstance();
-        Date endDate=calendar.getTime();
-        calendar.add(Calendar.MONTH,-1);
-        Date startDate=calendar.getTime();
+        // Get the current date and the start of the current month
+        Calendar calendar = Calendar.getInstance();
+        Date endDate = calendar.getTime(); // Current date
+        calendar.add(Calendar.MONTH, -1);
+        Date startDate = calendar.getTime(); // Start of the previous month
 
-        long totalStudents=repository.countStudentsByTeacherId(teacherId);
+        // Get the start of the previous month
+        calendar.add(Calendar.MONTH, -1);
+        Date previousMonthStartDate = calendar.getTime();
 
-        long currentMonthsStudents=repository.countStudentsByTeacherIdAndDateRange(
+        // Count students for the current month
+        long currentMonthStudents = repository.countStudentsByTeacherIdAndDateRange(
                 teacherId,
                 startDate,
                 endDate
         );
 
-        double percentage=((double) currentMonthsStudents / totalStudents) * 100;
-//        if(totalStudents!=0){
-//            percentage = ((double) currentMonthsStudents / totalStudents) * 100;
-//        }
-        String trend=percentage>=0?"Increased":"Decreased";
+        // Count students for the previous month
+        long previousMonthStudents = repository.countStudentsByTeacherIdAndDateRange(
+                teacherId,
+                previousMonthStartDate,
+                startDate
+        );
+
+        // Calculate the percentage change
+        double percentage;
+        if (previousMonthStudents == 0) {
+            // If there were no students in the previous month, consider it as a 100% increase or 0% if no students in the current month
+            percentage = currentMonthStudents > 0 ? 100 : 0;
+        } else {
+            percentage = ((double) (currentMonthStudents - previousMonthStudents) / previousMonthStudents) * 100;
+        }
+
+        // Round the percentage to 2 decimal places
+        percentage = Math.round(percentage * 100.0) / 100.0;
+
+        // Determine the trend
+        String trend = percentage >= 0 ? "Increased" : "Decreased";
 
         return AnalysisResponse.builder()
                 .trend(trend)
                 .percentage(percentage)
-                .current(totalStudents)
+                .current(currentMonthStudents) // Current month's student count
                 .build();
     }
 

@@ -40,7 +40,6 @@ public class BatchController {
     @GetMapping("/analysis")
     public ResponseEntity<AnalysisResponse> analyse(
             @RequestHeader("Authorization") String authToken){
-        System.out.println("inside batch analysis");
         return ResponseEntity.ok(service.batchAnalysis(authToken));
     }
 

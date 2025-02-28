@@ -124,8 +124,6 @@ public class BatchServiceImpl implements BatchService {
 
         long currentMonthCount = repository.countBatchesByTeacherInCurrentMonth(teacherId);
         long previousMonthCount = repository.countBatchesByTeacherInPreviousMonth(teacherId);
-        System.out.println(currentMonthCount);
-        System.out.println(previousMonthCount);
         long totalBatches = repository.countBatchesByTeacherId(teacherId);
 
         double percentage;
