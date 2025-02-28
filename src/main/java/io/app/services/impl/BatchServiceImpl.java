@@ -118,25 +118,28 @@ public class BatchServiceImpl implements BatchService {
 
     @Override
     public AnalysisResponse batchAnalysis(String authToken) {
-        String mobileNumber=extractJwt(authToken);
-        long teacherId=teacherRepository.findIdByPhone(mobileNumber)
-                .orElseThrow(()->new ResourceNotFoundException("Invalid Teacher"));
+        String mobileNumber = extractJwt(authToken);
+        long teacherId = teacherRepository.findIdByPhone(mobileNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Invalid Teacher"));
 
-        long currentMonthCount=repository.countBatchesByTeacherInCurrentMonth(teacherId);
-        long previousMonthCount=repository.countBatchesByTeacherInPreviousMonth(teacherId);
-        long totalBatches=repository.countBatchesByTeacherId(teacherId);
+        long currentMonthCount = repository.countBatchesByTeacherInCurrentMonth(teacherId);
+        long previousMonthCount = repository.countBatchesByTeacherInPreviousMonth(teacherId);
+        System.out.println(currentMonthCount);
+        System.out.println(previousMonthCount);
+        long totalBatches = repository.countBatchesByTeacherId(teacherId);
 
-        double percentage=0;
-        if (previousMonthCount==0){
-            percentage=100;
-        }else{
-            percentage=((currentMonthCount-previousMonthCount)/previousMonthCount)*100;
+        double percentage;
+        if (previousMonthCount == 0) {
+            // If there were no batches in the previous month, consider it as a 100% increase or decrease
+            percentage = currentMonthCount > 0 ? 100 : 0;
+        } else {
+            percentage = ((double) (currentMonthCount - previousMonthCount) / previousMonthCount) * 100;
         }
 
         return AnalysisResponse.builder()
                 .current(totalBatches)
                 .percentage(percentage)
-                .trend(percentage>=0?"Increased":"Decreased")
+                .trend(percentage >= 0 ? "Increased" : "Decreased")
                 .build();
     }
 
