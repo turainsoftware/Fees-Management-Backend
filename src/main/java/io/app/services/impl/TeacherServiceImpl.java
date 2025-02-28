@@ -138,10 +138,10 @@ public class TeacherServiceImpl implements TeacherService {
                 endDate
         );
 
-        double percentage=0;
-        if(totalStudents!=0){
-            percentage = ((double) currentMonthsStudents / totalStudents) * 100;
-        }
+        double percentage=((double) currentMonthsStudents / totalStudents) * 100;
+//        if(totalStudents!=0){
+//            percentage = ((double) currentMonthsStudents / totalStudents) * 100;
+//        }
         String trend=percentage>=0?"Increased":"Decreased";
 
         return AnalysisResponse.builder()
