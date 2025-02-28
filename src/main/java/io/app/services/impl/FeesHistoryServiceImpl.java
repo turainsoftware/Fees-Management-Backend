@@ -97,10 +97,12 @@ public class FeesHistoryServiceImpl implements FeesHistoryService {
             }
         }
 
-        double percentage=((currentMonthFees-previousMonthFees)/previousMonthFees)*100;;
-//        if (previousMonthFees!=0){
-//        percentage=((currentMonthFees-previousMonthFees)/previousMonthFees)*100;
-//        }
+        double percentage;
+        if(previousMonthFees==0){
+            percentage=currentMonthFees>0?100:0;
+        }else{
+            percentage=((currentMonthFees-previousMonthFees)/previousMonthFees)*100;
+        }
 
         return AnalysisResponse.builder()
                 .trend(percentage>=0?"Increased":"Decreased")
