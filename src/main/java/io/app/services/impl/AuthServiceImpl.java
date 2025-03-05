@@ -50,9 +50,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse signup(Teacher teacher, MultipartFile profilePic) throws IOException {
-        if (profilePic.getSize()>MAX_PIC_SIZE){
-            throw new NotAllowedException("Image size should be less than 200KB");
-        }
         boolean isTeacherExists=repository.existsByPhone(teacher.getPhone());
         if (isTeacherExists){
             throw new DuplicateFoundException("Teacher already exists");

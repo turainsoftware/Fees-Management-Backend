@@ -32,7 +32,6 @@ public class StudentController {
                                      @RequestParam("joiningYear") int joinYear,
                                      @RequestParam("joiningMonth") int joinMonth) throws IOException {
         ObjectMapper objectMapper=new ObjectMapper();
-        log.info("Entered in registration");
         System.out.println(joinYear+" "+joinMonth);
         StudentDto studentDto=objectMapper.readValue(student,StudentDto.class);
         return service.studentRegistration(authToken,studentDto,batchId,profilePic,joinYear,joinMonth);
