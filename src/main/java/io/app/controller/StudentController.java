@@ -37,13 +37,22 @@ public class StudentController {
         return service.studentRegistration(authToken,studentDto,batchId,profilePic,joinYear,joinMonth);
     }
 
+    @PostMapping("/registration-no-profile-pic")
+    public ApiResponse createStudent(@RequestHeader("Authorization") String authToken,
+                                     @RequestBody StudentDto student,
+                                     @RequestParam(name = "batchId") Long batchId,
+                                     @RequestParam("joiningYear") int joinYear,
+                                     @RequestParam("joiningMonth") int joinMonth) throws IOException {
+
+        return service.studentRegistration(authToken,student,batchId,joinYear,joinMonth);
+    }
+
     @PatchMapping("/assign-batch")
     public ApiResponse assignStudentToABatch(@RequestHeader("Authorization") String authToken,
                                              @RequestParam("studentId") long studentId,
                                              @RequestParam("batchId") long batchId,
                                              @RequestParam("joiningYear") int startYear,
                                              @RequestParam("joiningMonth") int startMonth){
-        System.out.println(startYear+" "+startMonth);
         return service.assignBatch(authToken,studentId,batchId,startYear,startMonth);
     }
 

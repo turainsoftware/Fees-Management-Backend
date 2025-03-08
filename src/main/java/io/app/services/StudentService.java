@@ -16,6 +16,11 @@ public interface StudentService {
                                            MultipartFile profilePic,
                                            int joiningYear,
                                            int joiningMonth) throws IOException;
+    public ApiResponse studentRegistration(String authToken,
+                                           StudentDto studentDto,
+                                           Long batchId,
+                                           int joiningYear,
+                                           int joiningMonth) throws IOException;
     public ApiResponse assignBatch(String authToken,long studentId,long batchId,int startYear,int startMonth);
     public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent);
     public List<StudentDto> allStudentByBatch(Long batchId);

@@ -37,7 +37,7 @@ public class StudentServiceImpl implements StudentService {
     private final FeesRepository feesRepository;
 
 
-    private final static long MAX_PICSIZE=200*1024;
+    private final static long MAX_PICSIZE=3072*1024;
 
 
     @Override
@@ -48,7 +48,7 @@ public class StudentServiceImpl implements StudentService {
                                            int joiningYear,
                                            int joiningMonth) throws IOException {
         if (profilePic.getSize()>MAX_PICSIZE){
-            throw new NotAllowedException("Image size should be less than 200KB");
+            throw new NotAllowedException("Image size should be less than 3MB");
         }
         // Student Validation
 //        boolean isStudentExist=repository.existsByPhone(studentDto.getPhone());
@@ -85,6 +85,78 @@ public class StudentServiceImpl implements StudentService {
         String profileUrl=fileService.uploadProfilePic(profilePic);
         Student student=modelMapper.map(studentDto,Student.class);
         student.setProfilePic(profileUrl);
+
+        // Associating Teacher with Student
+        Set<Teacher> teachers=new HashSet<>();
+        teachers.add(teacher);
+        student.setTeachers(teachers);
+
+
+        //Associating Batch with Student
+//        Set<Batch> batches = new HashSet<>();
+//        batches.add(batch);
+
+        student.setBatches(Set.of(batch));
+
+        Student savedStudent = repository.save(student);
+
+//        StudentBatchEnrollment enrollment=StudentBatchEnrollment.builder()
+//                .year(joiningYear)
+//                .month(joiningMonth)
+//                .student(savedStudent)
+//                .batch(batch)
+//                .build();
+//        studentBatchEnrollmentRepository.save(enrollment);
+
+        Fees fees=Fees.builder()
+                .batch(batch)
+                .student(student)
+                .startYear(joiningYear)
+                .startMonth(joiningMonth)
+                .endMonth(projection.endMonth())
+                .endYear(projection.endYear())
+                .monthlyFees(projection.monthlyFees())
+                .build();
+        feesRepository.save(fees);
+
+        return ApiResponse.builder()
+                .status(true)
+                .message("Student Registration Successfully Completed")
+                .build();
+    }
+
+    @Override
+    public ApiResponse studentRegistration(String authToken,
+                                           StudentDto studentDto,
+                                           Long batchId,
+                                           int joiningYear,
+                                           int joiningMonth) throws IOException {
+        String teacherPhone=extractTeacher(authToken);
+        Teacher teacher=teacherRepository.findByPhone(teacherPhone)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid teacher credentials"));
+
+        //previousOne
+        Batch batch=Batch.builder()
+                .id(batchId)
+                .build();
+//        Updated one
+        BatchEndYearMonthProjection projection=batchRepository.findEndYearMonthById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid batch"));
+
+        // Batch Validation
+//        Set<Batch> batches = teacher.getBatches().stream().filter((item)->{
+//            return item.getId().equals(batchId);
+//        }).collect(Collectors.toSet());
+//
+//        if(batches.size()<=0){
+//            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
+//        }
+
+//        if (!teacher.getBatches().contains(batch)){
+//            throw new ResourceNotFoundException("Teacher doesn't have such Batch");
+//        }
+        Student student=modelMapper.map(studentDto,Student.class);
+
 
         // Associating Teacher with Student
         Set<Teacher> teachers=new HashSet<>();
