@@ -66,6 +66,20 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    public ApiResponse signup(Teacher teacher) {
+        boolean isTeacherExist=repository.existsByPhone(teacher.getPhone());
+        if(isTeacherExist){
+            throw new DuplicateFoundException("Teacher Already Exist");
+        }
+        repository.save(teacher);
+        return ApiResponse.builder()
+                .status(true)
+                .message("Registration Successfully Completed")
+                .build();
+    }
+
+
+    @Override
     public ResponseToken validateToken(String phoneNumber, String otp) {
         Teacher teacher=repository.findByPhone(phoneNumber)
                 .orElseThrow(()->new ResourceNotFoundException("Teacher is not registered"));

@@ -33,6 +33,12 @@ public class AuthController {
         return service.signup(teacher,profilePic);
     }
 
+    @PostMapping("/signup/default-profile")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ApiResponse signUp(@RequestBody Teacher teacher){
+        return service.signup(teacher);
+    }
+
     @GetMapping("/validate-otp")
     @ResponseStatus(HttpStatus.OK)
     public ResponseToken validateOtp(@RequestParam("mobile") String phoneNumber,
