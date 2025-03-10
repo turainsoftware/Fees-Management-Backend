@@ -96,4 +96,11 @@ public class BatchController {
         return service.updateBatchDetails(batchId,name,languageId,boardId,classesId);
     }
 
+    @DeleteMapping("/{batchId}/students/{studentId}")
+    public ApiResponse removeStudentFromBatch(
+            @PathVariable("batchId") long batchId,
+            @PathVariable("studentId") long studentId){
+        return service.removeStudentFromBatch(batchId,studentId);
+    }
+
 }

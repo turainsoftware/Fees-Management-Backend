@@ -38,12 +38,12 @@ public class StudentController {
     }
 
     @PostMapping("/registration-no-profile-pic")
-    public ApiResponse createStudent(@RequestHeader("Authorization") String authToken,
+    public ApiResponse createStudentWithoutProfile(@RequestHeader("Authorization") String authToken,
                                      @RequestBody StudentDto student,
                                      @RequestParam(name = "batchId") Long batchId,
                                      @RequestParam("joiningYear") int joinYear,
                                      @RequestParam("joiningMonth") int joinMonth) throws IOException {
-
+        log.info("entering in student registration without profile picture");
         return service.studentRegistration(authToken,student,batchId,joinYear,joinMonth);
     }
 

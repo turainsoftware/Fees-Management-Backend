@@ -35,6 +35,7 @@ public class BatchServiceImpl implements BatchService {
     private final JwtService jwtService;
     private final TeacherRepository teacherRepository;
     private final ModelMapper modelMapper;
+    private final StudentRepository studentRepository;
 
     @Override
     public ApiResponse createBatch(String authToken, BatchDto batchDto) {
@@ -260,6 +261,27 @@ public class BatchServiceImpl implements BatchService {
         return ApiResponse.builder()
                 .status(true)
                 .message("Successfully updated!")
+                .build();
+    }
+
+    @Override
+    public ApiResponse removeStudentFromBatch(Long batchId, Long studentId) {
+        Batch batch=repository.findById(batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Batch"));
+
+        Student student=studentRepository.findById(studentId)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Student"));
+
+        if (!student.getBatches().contains(batch)){
+            throw new ResourceNotFoundException("The student is not part of this batch");
+        }
+
+        student.getBatches().remove(batch);
+
+        studentRepository.save(student);
+        return ApiResponse.builder()
+                .status(true)
+                .message("Student Removed")
                 .build();
     }
 
