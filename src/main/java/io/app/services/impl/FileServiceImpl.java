@@ -52,38 +52,57 @@ public class FileServiceImpl implements FileService {
         int width = originalImage.getWidth();
         int height = originalImage.getHeight();
 
+        // If the image is already 1:1 and ≤ 150KB, return it as is
+        if (width == height && file.getSize() <= (150 * 1024)) {
+            return file;
+        }
+
         BufferedImage processedImage = originalImage;
 
-        // Check if the image is not in 1:1 aspect ratio
+        // Crop if not in 1:1 aspect ratio
         if (width != height) {
             int size = Math.min(width, height);
             int x = (width - size) / 2;
             int y = (height - size) / 2;
-
             processedImage = originalImage.getSubimage(x, y, size, size);
         }
 
-        // Determine the target size based on the original dimensions
-        int targetSize = (width < 300 && height < 300) ? 200 : 300;
+        // If the image was cropped (not originally 1:1), determine the target size
+        BufferedImage finalImage = processedImage;
+        if (width != height) {
+            int targetSize = (width < 300 && height < 300) ? 200 : 300;
+            finalImage = Thumbnails.of(processedImage)
+                    .size(targetSize, targetSize)
+                    .asBufferedImage();
+        }
 
-        // Resize the image to the target size
-        BufferedImage resizedImage = Thumbnails.of(processedImage)
-                .size(targetSize, targetSize)
-                .asBufferedImage();
+        // Determine the original file format and content type
+        String originalContentType = file.getContentType();
+        String originalFormat = originalContentType != null && originalContentType.contains("png") ? "png" : "jpg";
+        // Convert to output stream
+        ImageIO.write(finalImage, originalFormat, outputStream);
 
-        // Compress the image to ensure it is within 150KB
+        // If size is already ≤ 150KB, return it as is
+        if (outputStream.size() <= 150 * 1024) {
+            return new MockMultipartFile(
+                    file.getName(),
+                    file.getOriginalFilename(),
+                    "image/jpeg",
+                    outputStream.toByteArray()
+            );
+        }
+
+        // Compress the image to ensure it's within 150KB
         float quality = 1.0f;
         do {
             outputStream.reset();
-            ImageIO.write(resizedImage, "jpg", outputStream);
+            Thumbnails.of(finalImage)
+                    .outputQuality(quality)
+                    .toOutputStream(outputStream);
             if (outputStream.size() <= 150 * 1024) {
                 break;
             }
             quality -= 0.1f;
-            Thumbnails.of(resizedImage)
-                    .size(targetSize, targetSize)
-                    .outputQuality(quality)
-                    .toOutputStream(outputStream);
         } while (quality > 0.1f);
 
         return new MockMultipartFile(

@@ -35,6 +35,7 @@ public class StudentServiceImpl implements StudentService {
     private final ModelMapper modelMapper;
     private final StudentBatchEnrollmentRepository studentBatchEnrollmentRepository;
     private final FeesRepository feesRepository;
+    private final StudentBatchEnrollmentRepository studentBatHistoryRepository;
 
 
     private final static long MAX_PICSIZE=3072*1024;
@@ -190,6 +191,8 @@ public class StudentServiceImpl implements StudentService {
                 .monthlyFees(projection.monthlyFees())
                 .build();
         feesRepository.save(fees);
+
+
 
         return ApiResponse.builder()
                 .status(true)
