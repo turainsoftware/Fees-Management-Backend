@@ -5,6 +5,7 @@ import io.app.dto.ApiResponse;
 import io.app.dto.BatchDto;
 import io.app.dto.Projections.TeacherProjection;
 import io.app.dto.TeacherDto;
+import io.app.excetptions.NotAllowedException;
 import io.app.excetptions.ResourceNotFoundException;
 import io.app.model.*;
 import io.app.model.Class;
@@ -13,10 +14,13 @@ import io.app.repository.TeacherRepository;
 import io.app.services.JwtService;
 import io.app.services.TeacherService;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.dialect.unique.CreateTableUniqueDelegate;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -27,6 +31,7 @@ public class TeacherServiceImpl implements TeacherService {
     private final JwtService jwtService;
     private final ModelMapper modelMapper;
     private final BatchRepository batchRepository;
+    private final FileServiceImpl fileService;
 
     @Override
     public TeacherDto profile(String authToken) {
@@ -209,6 +214,29 @@ public class TeacherServiceImpl implements TeacherService {
                 .status(true)
                 .build();
     }
+
+        @Override
+        @Transactional
+        public ApiResponse updateProfilePicture(String authToken,
+                                                MultipartFile profileImage) throws IOException {
+            String mobile=getMobileByToken(authToken);
+            Teacher teacher=repository.findByPhone(mobile)
+                    .orElseThrow(()->new ResourceNotFoundException("Invalid Request"));
+            ApiResponse apiResponse=ApiResponse.builder()
+                    .status(false)
+                    .build();
+            if(fileService.deleteProfilePicture(teacher.getProfilePic())){
+                String profileUrl=fileService.uploadProfilePic(profileImage);
+                teacher.setProfilePic(profileUrl);
+                apiResponse.setMessage(profileUrl);
+                apiResponse.setStatus(true);
+            }else{
+                throw new NotAllowedException("Something went wrong!");
+            }
+
+
+            return apiResponse;
+        }
 
     @Override
     public Set<Language> languages(String authToken) {

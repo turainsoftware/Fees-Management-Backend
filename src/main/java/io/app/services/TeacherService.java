@@ -8,7 +8,9 @@ import io.app.dto.TeacherDto;
 import io.app.model.*;
 import io.app.model.Class;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +33,7 @@ public interface TeacherService {
 
     // Update Profile
     public ApiResponse updateProfile(String authToken,String name,String email,Gender gender);
+    public ApiResponse updateProfilePicture(String authToken, MultipartFile profileImage) throws IOException;
 
     public Set<Language> languages(String authToken);
     public Set<Board> boards(String authToken);

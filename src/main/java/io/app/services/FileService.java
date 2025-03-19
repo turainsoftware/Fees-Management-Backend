@@ -1,5 +1,6 @@
 package io.app.services;
 
+import io.app.dto.ApiResponse;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileNotFoundException;
@@ -10,4 +11,5 @@ public interface FileService {
     public String uploadProfilePic(MultipartFile profilePic) throws IOException;
     public MultipartFile resizeImage(MultipartFile file) throws IOException;
     public InputStream getProfileImage(String imageName) throws FileNotFoundException;
+    public boolean deleteProfilePicture(String profilePictureName);
 }

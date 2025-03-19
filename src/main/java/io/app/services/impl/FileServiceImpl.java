@@ -4,6 +4,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import io.app.services.FileService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
@@ -18,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class FileServiceImpl implements FileService {
 //    private final Cloudinary cloudinary;
 
@@ -118,6 +120,23 @@ public class FileServiceImpl implements FileService {
     public InputStream getProfileImage(String imageName) throws FileNotFoundException {
         FileInputStream fileInputStream=new FileInputStream(uploadDirectory+File.separator+imageName);
         return fileInputStream;
+    }
+
+    @Override
+    public boolean deleteProfilePicture(String profilePictureName) {
+        if(profilePictureName.contains("default")){
+            return true;
+        }
+        boolean flag=true;
+
+        File file=new File(uploadDirectory+ File.separator+profilePictureName);
+        System.out.println(uploadDirectory+profilePictureName);
+        if(file.exists()){
+            return file.delete();
+        }else{
+            flag=false;
+        }
+        return flag;
     }
 
 

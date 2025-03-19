@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(NotAllowedException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ApiResponse handleNotAllowedException(NotAllowedException ex){
         return ApiResponse.builder()
                 .message(ex.getMessage())

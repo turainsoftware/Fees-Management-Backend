@@ -17,7 +17,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.security.Provider;
 import java.util.List;
 import java.util.Set;
@@ -133,6 +135,12 @@ public class TeacherController {
         return service.boards(authToken);
     }
 
+    @PatchMapping("/profile/update/profile-pic")
+    @ResponseStatus(HttpStatus.OK)
+    public ApiResponse updateProfilePic(@RequestHeader("Authorization") String authToken,
+                                        @RequestParam("profile-pic") MultipartFile profilePic) throws IOException {
+        return service.updateProfilePicture(authToken,profilePic);
+    }
 
 
 }
