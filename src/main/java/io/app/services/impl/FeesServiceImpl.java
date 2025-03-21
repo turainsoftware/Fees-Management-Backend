@@ -31,7 +31,7 @@ public class FeesServiceImpl implements FeesService {
 
     @Override
     public ApiResponse recordPayment(long batchId, long studentId, PaymentRequest paymentRequest) {
-        Fees fees=feesRepository.findByStudentIdAndBatchId(studentId,batchId)
+        Fees fees=feesRepository.findByStudentIdAndBatchIdAndIsActiveTrue(studentId,batchId)
                 .orElseThrow(()->new ResourceNotFoundException("Fees not found for the batch or student"));
         YearMonth paymentYm=YearMonth.of(paymentRequest.getYear(),paymentRequest.getMonth());
         YearMonth startYm=YearMonth.of(fees.getStartYear(),fees.getEndMonth());
@@ -68,7 +68,7 @@ public class FeesServiceImpl implements FeesService {
 
     @Override
     public FeesDto getFeesByStudentAndBatch(long studentId, long batchId) {
-        Fees fees=feesRepository.findByStudentIdAndBatchId(studentId,batchId)
+        Fees fees=feesRepository.findByStudentIdAndBatchIdAndIsActiveTrue(studentId,batchId)
                 .orElseThrow(()->new ResourceNotFoundException("Fees Details not found"));
         FeesDto feesDto=convertToFeesDto(fees);
         return feesDto;

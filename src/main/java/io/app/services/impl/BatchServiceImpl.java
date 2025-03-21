@@ -17,6 +17,7 @@ import org.hibernate.ResourceClosedException;
 import org.hibernate.type.descriptor.java.ObjectArrayJavaType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -36,6 +37,7 @@ public class BatchServiceImpl implements BatchService {
     private final TeacherRepository teacherRepository;
     private final ModelMapper modelMapper;
     private final StudentRepository studentRepository;
+    private final FeesRepository feesRepository;
 
     @Override
     public ApiResponse createBatch(String authToken, BatchDto batchDto) {
@@ -279,6 +281,10 @@ public class BatchServiceImpl implements BatchService {
         student.getBatches().remove(batch);
 
         studentRepository.save(student);
+        Fees fees=feesRepository.findByStudentIdAndBatchIdAndIsActiveTrue(studentId,batchId)
+                .orElseThrow(()->new ResourceNotFoundException("Fees Not Found"));
+        fees.setActive(false);
+        feesRepository.save(fees);
         return ApiResponse.builder()
                 .status(true)
                 .message("Student Removed")

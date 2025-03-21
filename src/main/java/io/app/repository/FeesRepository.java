@@ -12,4 +12,7 @@ import java.util.Optional;
 public interface FeesRepository extends JpaRepository<Fees,Long> {
     @Query("SELECT f FROM Fees f WHERE f.student.id=:studentId AND f.batch.id=:batchId")
     public Optional<Fees> findByStudentIdAndBatchId(@Param("studentId") long studentId,@Param("batchId") long batchId);
+
+    @Query("SELECT f FROM Fees f WHERE f.student.id=:studentId AND f.batch.id=:batchId AND f.isActive=true")
+    public Optional<Fees> findByStudentIdAndBatchIdAndIsActiveTrue(long studentId,long batchId);
 }

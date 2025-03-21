@@ -50,12 +50,16 @@ public class Fees {
     @OneToMany(mappedBy = "fees",cascade = CascadeType.ALL)
     private List<FeesHistory> feesHistories=new ArrayList<>();
 
+    @Column(name = "isActive")
+    private boolean isActive;
+
 
     @PrePersist
     public void createFees(){
         YearMonth start = YearMonth.of(startYear, startMonth);
         YearMonth end = YearMonth.of(endYear, endMonth);
         long totalMonths = ChronoUnit.MONTHS.between(start,end)+1;
+        this.isActive=true;
 
         this.totalFees=totalMonths * this.monthlyFees;
         this.totalDue=this.totalFees;
