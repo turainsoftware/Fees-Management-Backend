@@ -17,4 +17,6 @@ public class Board {
     private Long id;
     @Column(unique = true)
     private String name;
+    @Column(unique = true)
+    private String code;
 }

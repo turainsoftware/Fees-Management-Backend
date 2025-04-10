@@ -1,6 +1,7 @@
 package io.app.controller;
 
 import io.app.services.impl.FileServiceImpl;
+import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -32,5 +33,12 @@ public class FileController {
         StreamUtils.copy(image,response.getOutputStream());
     }
 
+    @GetMapping(value = "/note/{noteName}",produces = MediaType.APPLICATION_PDF_VALUE)
+    public void notePdf(@PathVariable("noteName") String note,
+                        HttpServletResponse response) throws IOException {
+        InputStream pdf=fileService.getNotePdf(note);
+        response.setContentType(MediaType.APPLICATION_PDF_VALUE);
+        StreamUtils.copy(pdf,response.getOutputStream());
+    }
 
 }

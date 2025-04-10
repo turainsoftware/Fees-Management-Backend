@@ -2,6 +2,9 @@ package io.app.services.impl;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import io.app.dto.ApiResponse;
+import io.app.excetptions.NotAllowedException;
+import io.app.excetptions.ResourceNotFoundException;
 import io.app.services.FileService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +28,9 @@ public class FileServiceImpl implements FileService {
 
     @Value("${file.upload-dir.profile}")
     private String uploadDirectory;
+
+    @Value("${file.upload-dir.notes}")
+    private String notesDirectory;
 
     @Override
     public String uploadProfilePic(MultipartFile profilePic) throws IOException {
@@ -137,6 +143,37 @@ public class FileServiceImpl implements FileService {
             flag=false;
         }
         return flag;
+    }
+
+    public String uploadNote(MultipartFile pdfFile) throws IOException {
+        File file=new File(notesDirectory);
+        if(!file.exists()){
+            file.mkdirs();
+        }
+        String uniqueName=UUID.randomUUID().toString();
+        String extName=pdfFile.getOriginalFilename().substring(pdfFile.getOriginalFilename().lastIndexOf("."));
+        if(!extName.equals(".pdf")){
+            System.out.println(extName);
+            throw new NotAllowedException("Invalid Note Format");
+        }
+        String fileName=uniqueName+""+extName;
+
+        FileOutputStream fileOutputStream=new FileOutputStream(notesDirectory+ File.separator+fileName);
+        fileOutputStream.write(pdfFile.getBytes());
+        fileOutputStream.flush();
+        fileOutputStream.close();
+
+        return fileName;
+    }
+
+    @Override
+    public InputStream getNotePdf(String noteName) throws FileNotFoundException {
+        File file=new File(notesDirectory+File.separator+noteName);
+        if (!file.exists()){
+            throw new ResourceNotFoundException("Invalid Note Details");
+        }
+        FileInputStream fileInputStream=new FileInputStream(file);
+        return fileInputStream;
     }
 
 

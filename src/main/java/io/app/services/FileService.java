@@ -12,4 +12,6 @@ public interface FileService {
     public MultipartFile resizeImage(MultipartFile file) throws IOException;
     public InputStream getProfileImage(String imageName) throws FileNotFoundException;
     public boolean deleteProfilePicture(String profilePictureName);
+    public String uploadNote(MultipartFile pdfFile) throws IOException;
+    public InputStream getNotePdf(String noteName) throws FileNotFoundException;
 }
