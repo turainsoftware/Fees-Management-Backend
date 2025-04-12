@@ -1,0 +1,27 @@
+spring:
+  profiles:
+    active: test
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    show-sql: true
+
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 50MB
+
+  cache:
+    type: caffeine
+    cache-names: teachers,batches
+
+cloudinary:
+  cloud-name: dp7yzwo4e
+  api-key: 392251233674868
+  api-secret: QBuG6_NjtB7fDN8Im-AxAyGdZg8

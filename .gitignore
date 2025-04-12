@@ -31,8 +31,7 @@ build/
 
 ### VS Code ###
 .vscode/
-#application.yaml
-#application-prod.yaml
-#application-test.yaml
+
 
 src/main/resources/static/uploads/profile/
+src/main/resources/static/uploads/notes/
