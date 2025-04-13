@@ -33,5 +33,5 @@ build/
 .vscode/
 
 
-src/main/resources/static/uploads/profile/
+#src/main/resources/static/uploads/profile/
 src/main/resources/static/uploads/notes/
