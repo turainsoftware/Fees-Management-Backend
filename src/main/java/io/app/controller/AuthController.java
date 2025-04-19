@@ -45,11 +45,4 @@ public class AuthController {
                                      @RequestParam(name = "otp") String otp){
         return service.validateToken(phoneNumber,otp);
     }
-
-
-    @PostMapping("/ok")
-    public String ok(@RequestBody Teacher teacher){
-        return "hello";
-    }
-
 }
