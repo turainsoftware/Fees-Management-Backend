@@ -103,4 +103,9 @@ public class BatchController {
         return service.removeStudentFromBatch(batchId,studentId);
     }
 
+    @DeleteMapping("/{batchId}")
+    public ApiResponse deactivateBatch(@PathVariable("batchId") long batchId){
+        return service.deactivateBatch(batchId);
+    }
+
 }

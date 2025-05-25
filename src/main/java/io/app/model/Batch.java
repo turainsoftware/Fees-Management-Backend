@@ -70,6 +70,7 @@ public class Batch {
     @ToString.Exclude
     private Teacher teacher;
 
+    private boolean isActive;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -78,7 +79,8 @@ public class Batch {
 
     @PrePersist
     public void preCreate() {
-        createdAt = new Date();
+        this.isActive=true;
+        this.createdAt = new Date();
     }
 
     @Temporal(TemporalType.TIMESTAMP)

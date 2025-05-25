@@ -34,4 +34,5 @@ public interface BatchService {
                                            LocalTime startTime,LocalTime endTime);
     public ApiResponse updateBatchDetails(long batchId,String name,long languageId,long boardId,Set<Long> classesId);
     public ApiResponse removeStudentFromBatch(Long batchId,Long studentId);
+    public ApiResponse deactivateBatch(Long batchId);
 }

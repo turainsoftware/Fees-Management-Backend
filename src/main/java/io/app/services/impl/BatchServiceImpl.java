@@ -83,10 +83,11 @@ public class BatchServiceImpl implements BatchService {
         String mobileNumber=extractJwt(authToken);
         Teacher teacher=teacherRepository.findByPhone(mobileNumber)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Credentials"));
-        List<Batch> batches=repository.findByTeacher(teacher);
+        List<Batch> batches=repository.findByTeacherAndIsActiveTrue(teacher);
         List<BatchDto> result=batches.stream()
                 .map((data)->modelMapper.map(data,BatchDto.class))
                 .collect(Collectors.toList());
+        log.info("BAtches: {}",batches);
         return result;
     }
 
@@ -289,6 +290,25 @@ public class BatchServiceImpl implements BatchService {
                 .status(true)
                 .message("Student Removed")
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public ApiResponse deactivateBatch(Long batchId) {
+        boolean isBatchExist=repository.existsById(batchId);
+        if (!isBatchExist){
+            throw new ResourceNotFoundException("Invalid batch");
+        }
+        int flag=repository.updateIsActiveFalse(batchId);
+        ApiResponse apiResponse=new ApiResponse();
+        if (flag>0){
+            apiResponse.setMessage("Batch Deleted Successfully");
+            apiResponse.setStatus(true);
+        }{
+            apiResponse.setStatus(false);
+            apiResponse.setMessage("");
+        }
+        return apiResponse;
     }
 
     public boolean hasTimeConflict(Teacher teacher,

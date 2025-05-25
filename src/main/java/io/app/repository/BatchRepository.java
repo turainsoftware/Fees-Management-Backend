@@ -6,6 +6,7 @@ import io.app.model.Batch;
 import io.app.model.Teacher;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -42,5 +43,10 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
 
 
     Optional<Batch> findByIdAndTeacher(long batchId,Teacher teacher);
+    List<Batch> findByTeacherAndIsActiveTrue(Teacher teacher);
+
+    @Modifying
+    @Query("UPDATE Batch b SET b.isActive = false WHERE b.id = :batchId")
+    int updateIsActiveFalse(@Param("batchId") long batchId);
 
 }
