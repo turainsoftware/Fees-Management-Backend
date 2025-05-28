@@ -19,7 +19,7 @@ public interface BatchRepository extends JpaRepository<Batch,Long> {
     @Cacheable(value = "batches",key = "#batchId")
     public Optional<Batch> findById(Long id);
 
-    public boolean existsByNameAndTeacher(String name,Teacher teacher);
+    public boolean existsByNameAndTeacherAndIsActiveTrue(String name,Teacher teacher);
 
     @Query("SELECT new io.app.dto.BatchEndYearMonthProjection(b.id,b.endYear,b.endMonth,b.monthlyFees) FROM Batch b WHERE b.id = :id")
     public Optional<BatchEndYearMonthProjection> findEndYearMonthById(@Param("id") Long id);

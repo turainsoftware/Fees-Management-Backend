@@ -44,7 +44,7 @@ public class BatchServiceImpl implements BatchService {
         String userName=extractJwt(authToken);
         Teacher teacher= teacherRepository.findByPhone(userName)
                 .orElseThrow(()->new ResourceNotFoundException("Invalid User credentials"));
-        if (repository.existsByNameAndTeacher(batchDto.getName(),teacher)){
+        if (repository.existsByNameAndTeacherAndIsActiveTrue(batchDto.getName(),teacher)){
             throw new DuplicateFoundException("The batch is already exists");
         }
         if (hasTimeConflict(teacher,batchDto.getStartTime(),batchDto.getEndTime(),batchDto.getDays())){
@@ -301,12 +301,13 @@ public class BatchServiceImpl implements BatchService {
         }
         int flag=repository.updateIsActiveFalse(batchId);
         ApiResponse apiResponse=new ApiResponse();
-        if (flag>0){
-            apiResponse.setMessage("Batch Deleted Successfully");
-            apiResponse.setStatus(true);
-        }{
+        log.info("Rows Affected {} ",flag);
+        if (flag==0){
             apiResponse.setStatus(false);
             apiResponse.setMessage("");
+        }{
+            apiResponse.setMessage("Batch Deleted Successfully");
+            apiResponse.setStatus(true);
         }
         return apiResponse;
     }
