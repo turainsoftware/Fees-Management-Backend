@@ -24,6 +24,7 @@ public interface BatchService {
     public AnalysisResponse batchAnalysis(String authToken);
     public List<BatchProjection> getAllBatchDetailsWithSpecificDetails(String authToken);
     public BatchDto getBatchById(long id);
+    public ApiResponse updateWholeBatch(BatchDto batchDto);
     public ApiResponse updateBatchFees(String authToken,long batchId,
                                        double monthlyFees,double monthlyExamFees);
     public ApiResponse updateBatchSubjects(long batchId,Set<Long> subjectsId);

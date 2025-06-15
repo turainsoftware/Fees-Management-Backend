@@ -54,6 +54,12 @@ public class BatchController {
         return service.getBatchById(id);
     }
 
+    @PatchMapping
+    public ResponseEntity<ApiResponse> update(
+            @RequestHeader("Authorization") String authToken,
+            @RequestBody BatchDto batchDto){
+        return ResponseEntity.ok(service.updateWholeBatch(batchDto));
+    }
     @PatchMapping("/update-fees")
     public ApiResponse updateBatchFeesDetails(
             @RequestHeader("Authorization") String authToken,

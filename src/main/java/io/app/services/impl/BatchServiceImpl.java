@@ -163,6 +163,31 @@ public class BatchServiceImpl implements BatchService {
         return batchDto;
     }
 
+    @Transactional
+    @Override
+    public ApiResponse updateWholeBatch(BatchDto batchDto) {
+        Batch batch=repository.findById(batchDto.getId())
+                .orElseThrow(()->new ResourceNotFoundException("Invalid Details"));
+        hasTimeConflict(batch.getTeacher(),batchDto.getStartTime(),batchDto.getEndTime(),batchDto.getDays());
+        batch.setClasses(batchDto.getClasses());
+        batch.setBoard(batchDto.getBoard());
+        batch.setLanguage(batchDto.getLanguage());
+        batch.setSubjects(batchDto.getSubjects());
+        batch.setDays(batchDto.getDays());
+        batch.setStartYear(batchDto.getStartYear());
+        batch.setStartMonth(batchDto.getStartMonth());
+        batch.setStartTime(batchDto.getStartTime());
+        batch.setEndYear(batchDto.getEndYear());
+        batch.setEndMonth(batchDto.getEndMonth());
+        batch.setEndTime(batchDto.getEndTime());
+        batch.setMonthlyExamFees(batchDto.getMonthlyExamFees());
+        batch.setMonthlyFees(batchDto.getMonthlyFees());
+        return ApiResponse.builder()
+                .status(true)
+                .message("Update applied successfully.")
+                .build();
+    }
+
     @Override
     public ApiResponse updateBatchFees(String authToken, long batchId,
                                        double monthlyFees,double monthlyExamFees) {
