@@ -9,6 +9,7 @@ import io.app.services.impl.StudentServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -78,6 +79,20 @@ public class StudentController {
     @GetMapping("/mobile/{mobile}")
     public ResponseEntity<StudentDto> findStudentByMobileNumber(@PathVariable("mobile") String mobile){
         return ResponseEntity.ok(service.getStudentByMobile(mobile));
+    }
+
+
+    /*
+    * Students by teacher with pagination
+    */
+    @GetMapping("/teacher")
+    public ResponseEntity<List<StudentDto>> studentsByTeacher(
+            @RequestHeader("Authorization") String authToken,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name",required = false) String sortBy
+    ){
+        return ResponseEntity.ok(service.allStudentByTeacher(authToken,page,size,sortBy));
     }
 
 }

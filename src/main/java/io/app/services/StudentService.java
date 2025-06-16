@@ -23,6 +23,7 @@ public interface StudentService {
                                            int joiningMonth) throws IOException;
     public ApiResponse assignBatch(String authToken,long studentId,long batchId,int startYear,int startMonth);
     public List<StudentDto> allStudentByTeacher(String authToken,boolean isRecent);
+    public List<StudentDto> allStudentByTeacher(String authToken,int page,int size,String sortBy);
     public List<StudentDto> allStudentByBatch(Long batchId);
     public ApiResponse isStudentExists(String mobileNumber);
     public StudentDto getStudentByMobile(String mobile);

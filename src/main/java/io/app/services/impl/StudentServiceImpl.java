@@ -14,6 +14,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.ResourceClosedException;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -271,6 +275,20 @@ public class StudentServiceImpl implements StudentService {
         }
         List<StudentDto> result=students.stream().map((item)->{
             return modelMapper.map(item,StudentDto.class);
+        }).collect(Collectors.toList());
+        return result;
+    }
+
+    @Override
+    public List<StudentDto> allStudentByTeacher(String authToken, int page, int size, String sortBy) {
+        String mobileNumber=extractTeacher(authToken);
+        Teacher teacher=teacherRepository.findByPhone(mobileNumber)
+                .orElseThrow(()->new ResourceNotFoundException("Invalid credentials"));
+        Pageable pageable= PageRequest.of(page,size, Sort.by(sortBy));
+        Page<Student> students=repository.findByTeachers(teacher,pageable);
+        List<StudentDto> result=students.stream().map(student->{
+            StudentDto dto=modelMapper.map(student,StudentDto.class);
+            return dto;
         }).collect(Collectors.toList());
         return result;
     }
