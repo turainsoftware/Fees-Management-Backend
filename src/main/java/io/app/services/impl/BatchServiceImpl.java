@@ -169,6 +169,7 @@ public class BatchServiceImpl implements BatchService {
         Batch batch=repository.findById(batchDto.getId())
                 .orElseThrow(()->new ResourceNotFoundException("Invalid Details"));
         hasTimeConflict(batch.getTeacher(),batchDto.getStartTime(),batchDto.getEndTime(),batchDto.getDays());
+        batch.setName(batchDto.getName());
         batch.setClasses(batchDto.getClasses());
         batch.setBoard(batchDto.getBoard());
         batch.setLanguage(batchDto.getLanguage());
